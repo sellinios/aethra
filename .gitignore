@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Django
+db.sqlite3
+*.log
+static/
+media/
+
+# Environment Variables
+.env
+
+# Node.js
+node_modules/
+build/
+
+# SSL Certificates
+nginx/ssl/
