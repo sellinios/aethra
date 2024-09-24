@@ -10,6 +10,7 @@ media/
 
 # Environment Variables
 .env
+venv/
 
 # Node.js
 node_modules/
