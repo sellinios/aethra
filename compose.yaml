@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:16.4
+    image: postgis/postgis:latest
     env_file:
       - ./backend/.env.production
     volumes:
@@ -17,10 +17,10 @@ services:
       - media_volume:/code/media
     env_file:
       - ./backend/.env.production
+    ports:
+      - '8000:8000'  # Change from expose to ports for accessibility
     depends_on:
       - db
-    expose:
-      - '8000'
 
   frontend:
     build:
