@@ -15,7 +15,7 @@ if not ALLOWED_HOSTS:
 # ------------------------------
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.getenv('POSTGRES_DB_PROD', ''),
         'USER': os.getenv('POSTGRES_USER_PROD', ''),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD_PROD', ''),

@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'parler',
     'corsheaders',
     'rest_framework',
+    'django.contrib.gis',
 
     # Your Django apps
     'api',  # Replace 'api' with your actual app name
@@ -79,7 +80,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # ------------------------------
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': get_env_variable('POSTGRES_DB'),
         'USER': get_env_variable('POSTGRES_USER'),
         'PASSWORD': get_env_variable('POSTGRES_PASSWORD'),

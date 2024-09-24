@@ -1,13 +1,19 @@
 # Use the official Python image
 FROM python:3.12-slim
 
-# Install system dependencies
+# Install system dependencies including GDAL
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
+    gdal-bin \
+    libgdal-dev \
     curl \
     dos2unix \
     netcat-openbsd  # Changed from 'netcat' to 'netcat-openbsd'
+
+# Set environment variable for GDAL
+ENV CPLUS_INCLUDE_PATH=/usr/include/gdal \
+    C_INCLUDE_PATH=/usr/include/gdal
 
 # Set work directory
 WORKDIR /code
