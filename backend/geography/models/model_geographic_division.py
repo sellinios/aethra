@@ -23,3 +23,12 @@ class GeographicDivision(models.Model):
     class Meta:
         unique_together = ('name', 'parent', 'level_name')
         verbose_name_plural = "Geographic Divisions"
+
+
+class Municipality(GeographicDivision):
+    # Example fields specific to Municipality
+    population = models.IntegerField(null=True, blank=True)
+    area = models.FloatField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} Municipality"

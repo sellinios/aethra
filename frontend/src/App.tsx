@@ -5,7 +5,7 @@ import Header from './components/Header/Header';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
-import MunicipalitiesPage from './pages/MunicipalitiesPage';
+import MunicipalitiesPage from './pages/Municipalities';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 
