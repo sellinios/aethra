@@ -39,7 +39,7 @@ INSTALLED_APPS = [
 
     # Your Django apps
     'api',  # Replace 'api' with your actual app name
-    'geography'
+    'geography',
 ]
 
 MIDDLEWARE = [

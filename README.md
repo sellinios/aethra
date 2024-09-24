@@ -61,9 +61,9 @@ docker-compose down
 Bring up the containers with rebuild:
 
 ```bash
-docker-compose up -d --build 
-docker-compose up -d --build backend
-docker-compose up -d --build frontend
+docker-compose -f compose.yaml up -d --build
+docker-compose -f compose.yaml up -d --build backend
+docker-compose -f compose.yaml up -d --build frontend
 ```
 
 ### Running Containers
