@@ -26,9 +26,16 @@ class GeographicDivisionAdmin(admin.ModelAdmin):
     ordering = ('name',)
     list_per_page = 20
 
+
 @admin.register(GeographicCategory)
 class GeographicCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug')
-    search_fields = ('name',)
-    ordering = ('slug',)  # Change to 'slug' as 'name' is not a direct field
+    list_display = ('get_name', 'slug')
+    search_fields = ('translations__name',)
+    ordering = ('slug',)
     list_per_page = 20
+
+    def get_name(self, obj):
+        return obj.safe_translation_getter('name', any_language=True) or "Unnamed Category"
+    get_name.short_description = 'Name'
+
+

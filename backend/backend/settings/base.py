@@ -173,10 +173,10 @@ CSRF_TRUSTED_ORIGINS = [
 PARLER_LANGUAGES = {
     None: (
         {'code': 'en', 'name': 'English'},
-        {'code': 'fr', 'name': 'French'},  # Add more languages as needed
+        {'code': 'fr', 'name': 'French'},
     ),
     'default': {
-        'fallbacks': ['en'],  # Fallback to English if translation not available
-        'hide_untranslated': False,  # Show untranslated content instead of hiding it
+        'fallback': ['en'],  # Corrected spelling
+        'hide_untranslated': False,
     }
 }
