@@ -1,20 +1,16 @@
 #!/bin/sh
 
-# Wait for PostgreSQL to be ready
-echo "Waiting for PostgreSQL..."
+# Wait for the PostgreSQL database to be ready
 while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
-  sleep 0.1
+  echo "Waiting for PostgreSQL at $POSTGRES_HOST:$POSTGRES_PORT..."
+  sleep 3
 done
-echo "PostgreSQL started"
 
-# Apply database migrations
-echo "Applying database migrations..."
+# Run migrations
 python manage.py migrate
 
 # Collect static files
-echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
-# Start Gunicorn server
-echo "Starting Gunicorn..."
+# Start the Django application using gunicorn
 gunicorn backend.wsgi:application --bind 0.0.0.0:8000
