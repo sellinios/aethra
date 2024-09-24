@@ -1,11 +1,7 @@
 # Python
 __pycache__/
-*.py[cod]
-*.pyc
 *.pyo
 *.pyd
-*.env
-
 # Django
 db.sqlite3
 *.log
@@ -15,10 +11,8 @@ media/
 # Node.js
 node_modules/
 build/
-.env
 
 # Environment Variables
-.env
 .env.*
 
 # SSL Certificates
@@ -27,15 +21,9 @@ nginx/ssl/
 # Docker
 *.db
 *.pot
-*.pyc
-__pycache__/
 local_settings.py
-db.sqlite3
-media
-
 # Others
 *.swp
 .sass-cache/
 *.DS_Store
 .idea/
-.vscode/
