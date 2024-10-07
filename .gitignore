@@ -1,6 +1,8 @@
 # Python
 __pycache__/
 *.py[cod]
+*.egg-info/
+*.egg
 
 # Django
 db.sqlite3
@@ -9,8 +11,8 @@ static/
 media/
 
 # Environment Variables
-.env
-venv/
+.env*
+.envrc*
 
 # Node.js
 node_modules/
@@ -18,3 +20,22 @@ build/
 
 # SSL Certificates
 nginx/ssl/
+
+# Backups
+backups/
+
+# Virtual Environment
+venv/
+.env/
+
+# Logs
+*.log
+*.log.*
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+
+# IDE Settings
+.idea/
+.vscode/

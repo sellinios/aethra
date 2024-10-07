@@ -14,9 +14,33 @@
           <option name="readOnly" value="false" />
         </ForwardedPortInfo>
       </entry>
+      <entry key="8004">
+        <ForwardedPortInfo>
+          <option name="hostPort" value="8004" />
+          <option name="readOnly" value="false" />
+        </ForwardedPortInfo>
+      </entry>
+      <entry key="8005">
+        <ForwardedPortInfo>
+          <option name="hostPort" value="8005" />
+          <option name="readOnly" value="false" />
+        </ForwardedPortInfo>
+      </entry>
+      <entry key="8007">
+        <ForwardedPortInfo>
+          <option name="hostPort" value="8007" />
+          <option name="readOnly" value="false" />
+        </ForwardedPortInfo>
+      </entry>
       <entry key="8055">
         <ForwardedPortInfo>
           <option name="hostPort" value="8055" />
+          <option name="readOnly" value="false" />
+        </ForwardedPortInfo>
+      </entry>
+      <entry key="8066">
+        <ForwardedPortInfo>
+          <option name="hostPort" value="8066" />
           <option name="readOnly" value="false" />
         </ForwardedPortInfo>
       </entry>

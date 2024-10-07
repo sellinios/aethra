@@ -1,29 +1,63 @@
 # Python
 __pycache__/
-*.pyo
-*.pyd
+*.egg
+*.egg-info/
+build/
+
 # Django
 db.sqlite3
-*.log
-static/
 media/
+uploads/
+
+# Environment Variables
+.env
+
+# Virtualenv
+venv/
+ENV/
+
+# macOS
+.DS_Store
+
+# Backup files
+*.swp
 
 # Node.js
 node_modules/
-build/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Environment Variables
-.env.*
+# React
+public/
+# Docker
+docker-compose.override.yml
+.dockerignore
 
-# SSL Certificates
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+.nox/
+
+# Other IDE files
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# PostgreSQL
+*.dump
+*.sql
+
+# SSL Keys
 nginx/ssl/
 
-# Docker
-*.db
-*.pot
-local_settings.py
-# Others
-*.swp
-.sass-cache/
-*.DS_Store
-.idea/
+# Compiled bytecode files
+**/*.pyo
+
+# System Files
+Thumbs.db
+Desktop.ini
+
+# Generated Files
+static/

@@ -1,4 +1,3 @@
-# model_geographic_place.py
 from django.db import models
 from django.contrib.gis.db import models as gis_models
 from django.contrib.gis.geos import Point
@@ -8,7 +7,6 @@ from parler.models import TranslatableModel, TranslatedFields
 from unidecode import unidecode
 from .model_geographic_category import GeographicCategory
 from .model_geographic_division import GeographicDivision
-
 
 class GeographicPlace(TranslatableModel):
     id = models.AutoField(primary_key=True)
@@ -55,15 +53,22 @@ class GeographicPlace(TranslatableModel):
         if not self.elevation:
             self.elevation = 0
 
+        # Save the object initially to get a primary key (if new)
         if not self.pk:
             super().save(*args, **kwargs)
 
+        # Ensure language handling is correct
         for lang in self.get_available_languages():
-            lang_code = lang if isinstance(lang, str) else lang[0]
+            # Ensure lang is always a string, handle lists/tuples properly
+            lang_code = lang if isinstance(lang, str) else lang[0]  # Extract first element from list/tuple
             self.set_current_language(lang_code)
+
+            # Set a default name if it's missing
             if not self.safe_translation_getter('name', any_language=True):
                 self.name = "To Be Defined"
+
+            # Set the slug if it's missing
             if not self.safe_translation_getter('slug', any_language=True):
-                self.slug = slugify(unidecode(self.safe_translation_getter('name', any_language=True)))
+                self.slug = slugify(unidecode(self.name))
 
         super().save(*args, **kwargs)
