@@ -18,20 +18,31 @@ services:
     env_file:
       - ./backend/.env.production
     ports:
-      - '8000:8000'  # Change from expose to ports for accessibility
+      - '8000:8000'
     depends_on:
       - db
 
-  frontend:
+  frontend_kairos:
     build:
-      context: ./frontend
+      context: ./frontend/frontend_kairos
       dockerfile: Dockerfile
     environment:
       - REACT_APP_API_URL=https://kairos.gr/api/
     depends_on:
       - backend
     volumes:
-      - ./frontend/build:/usr/share/nginx/html
+      - ./frontend/frontend_kairos/build:/usr/share/nginx/html
+
+  frontend_fthina:
+    build:
+      context: ./frontend/frontend_fthina
+      dockerfile: Dockerfile
+    environment:
+      - REACT_APP_API_URL=https://fthina.gr/api/
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/frontend_fthina/build:/usr/share/nginx/html
 
   nginx:
     image: nginx:stable-alpine
@@ -43,10 +54,13 @@ services:
       - ./nginx/ssl:/etc/nginx/ssl:ro
       - static_volume:/code/static:ro
       - media_volume:/code/media:ro
-      - ./frontend/build:/usr/share/nginx/html:ro
+      # Pointing to two different frontend builds
+      - ./frontend/frontend_kairos/build:/usr/share/nginx/kairos_html:ro
+      - ./frontend/frontend_fthina/build:/usr/share/nginx/fthina_html:ro
     depends_on:
       - backend
-      - frontend
+      - frontend_kairos
+      - frontend_fthina
 
 volumes:
   postgres_data:

@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 
-# Build paths inside the project
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
@@ -36,15 +36,15 @@ INSTALLED_APPS = [
     'parler',
     'corsheaders',
     'rest_framework',
-    'django.contrib.gis',
+    'django.contrib.gis',  # GeoDjango GIS features
 
     # Your Django apps
-    'api',  # Replace 'api' with your actual app name
+    'api',  # Adjust according to your actual app name
     'geography',
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # Add this line
+    'corsheaders.middleware.CorsMiddleware',  # Allow CORS for your APIs
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -53,7 +53,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -123,7 +122,15 @@ USE_TZ = True
 # STATIC AND MEDIA FILES
 # ------------------------------
 STATIC_URL = '/django_static/'
-STATIC_ROOT = BASE_DIR / 'static'
+
+# Multiple static directories for kairos and fthina
+STATICFILES_DIRS = [
+    BASE_DIR / 'static/kairos',  # Static files for kairos site
+    BASE_DIR / 'static/fthina',  # Static files for fthina site
+]
+
+# Where collectstatic will gather the static files in production
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -176,7 +183,18 @@ PARLER_LANGUAGES = {
         {'code': 'fr', 'name': 'French'},
     ),
     'default': {
-        'fallback': ['en'],  # Corrected spelling
+        'fallback': ['en'],  # Fallback to English
         'hide_untranslated': False,
     }
 }
+
+# ------------------------------
+# CORS HEADERS SETTINGS
+# ------------------------------
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
+    if origin.strip()
+]
+
+# Additional settings for development/production can go in development.py or production.py
