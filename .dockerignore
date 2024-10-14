@@ -1,0 +1,43 @@
+# General Node.js exclusions
+node_modules/        # Exclude Node.js dependencies (will be installed inside the container)
+build/               # Exclude frontend build output (will be built inside the container)
+dist/                # Exclude frontend dist folder (if applicable)
+
+# Python/Django exclusions
+__pycache__/         # Exclude Python cache
+*.py[cod]            # Exclude Python bytecode files
+*.egg-info/          # Exclude Python package metadata
+*.egg
+
+# Virtual environments
+venv/                # Exclude Python virtual environment (should be created inside the container)
+.venv/               # Exclude any local virtual environment
+
+# Django specific exclusions
+db.sqlite3           # Exclude SQLite database file
+media/               # Exclude media files (user uploads should not be part of the Docker image)
+static/              # Exclude static files (should be generated inside the container)
+*.log                # Exclude log files
+
+# Data directory
+data/                # Exclude any data files or directories (e.g., large datasets)
+
+# Environment variables
+.env*                # Exclude environment variable files (they should be passed as Docker environment variables)
+
+# SSL certificates
+nginx/ssl/           # Exclude local SSL certificates
+
+# Backups
+backups/             # Exclude backup files
+
+# System files
+.DS_Store            # Exclude macOS system files
+Thumbs.db            # Exclude Windows system files
+
+# IDE settings
+.idea/               # Exclude IntelliJ IDEA, PyCharm settings
+.vscode/             # Exclude Visual Studio Code settings
+
+# Docker-specific files
+docker-compose.override.yml  # Exclude local Docker Compose override file (used for local development)

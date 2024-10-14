@@ -1,0 +1,19 @@
+/* src/components/Footer/Footer.css */
+.footer {
+  background-color: #343a40;
+  color: #f8f9fa;
+  text-align: center;
+  padding: 1rem 0;
+  position: relative;
+  width: 100%;
+}
+
+.footer-link {
+  color: #f8f9fa;
+  margin: 0 0.5rem;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}

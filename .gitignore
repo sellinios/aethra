@@ -1,0 +1,33 @@
+# Ignore the Python virtual environment
+/venv/
+
+# Ignore backend data
+/backend/data/
+/backend/media/
+/backend/staticfiles/
+
+# Ignore environment files
+/backend/.env.development
+/backend/.env.production
+/backend/.envrc
+/frontend/frontend_kairos/.env.development
+/frontend/frontend_kairos/.env.production
+
+# Ignore node_modules in frontend
+/frontend/frontend_fthina/node_modules/
+/frontend/frontend_kairos/node_modules/
+
+/frontend/frontend_fthina/src/react-app-env.d.ts
+
+# Ignore SSL certificates (for security reasons)
+# Make sure to store them securely elsewhere
+/nginx/ssl/
+
+/__pycache__/
+/*.py[cod]
+
+# Ignore Docker-related files if they're not needed
+/docker-compose.yml
+
+# Ignore log files
+*.log

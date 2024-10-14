@@ -1,0 +1,70 @@
+services:
+  db:
+    image: postgis/postgis:latest
+    env_file:
+      - ./backend/.env.production
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: /bin/sh ./entrypoint.sh
+    volumes:
+      - ./backend:/code
+      - static_volume:/code/static
+      - media_volume:/code/media
+    env_file:
+      - ./backend/.env.production
+    ports:
+      - '8001:8000'  # Changed host port from 8000 to 8001
+    depends_on:
+      - db
+
+  frontend_kairos:
+    build:
+      context: ./frontend/frontend_kairos
+      dockerfile: Dockerfile
+    environment:
+      - REACT_APP_API_URL=https://kairos.gr/api/
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/frontend_kairos/build:/usr/share/nginx/kairos_html:ro
+
+  frontend_fthina:
+    build:
+      context: ./frontend/frontend_fthina
+      dockerfile: Dockerfile
+    environment:
+      - REACT_APP_API_URL=https://fthina.gr/api/
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/frontend_fthina/build:/usr/share/nginx/fthina_html:ro
+
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # Separate SSL folders for kairos.gr and fthina.gr
+      - ./nginx/ssl/kairos.gr:/etc/nginx/ssl/kairos.gr:ro
+      - ./nginx/ssl/fthina.gr:/etc/nginx/ssl/fthina.gr:ro
+      - static_volume:/code/static:ro
+      - media_volume:/code/media:ro
+      # Frontend build folders for kairos and fthina
+      - ./frontend/frontend_kairos/build:/usr/share/nginx/kairos_html:ro
+      - ./frontend/frontend_fthina/build:/usr/share/nginx/fthina_html:ro
+    depends_on:
+      - backend
+      - frontend_kairos
+      - frontend_fthina
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:

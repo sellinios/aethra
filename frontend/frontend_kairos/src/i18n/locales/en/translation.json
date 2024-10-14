@@ -1,0 +1,12 @@
+{
+  "home": "Home",
+  "about": "About",
+  "contact": "Contact",
+  "geography": "Geography",
+  "municipalities": "Municipalities",
+  "login": "Login",
+  "register": "Register",
+  "nearest_place": "Nearest Place",
+  "error_geolocation": "Error getting geolocation",
+  "geolocation_not_available": "Geolocation is not available in this browser"
+}

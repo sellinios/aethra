@@ -1,0 +1,19 @@
+/* src/components/Header/Header.css */
+
+.header {
+  position: relative;
+  z-index: 1000;  /* Ensure it's always on top */
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+}
+
+.nav-link, .dropdown-item {
+  font-size: 1rem;
+  color: white;  /* Ensure nav links are white */
+}
+
+.nav-link:hover, .dropdown-item:hover {
+  color: #f8f9fa; /* Slight hover effect */
+}
