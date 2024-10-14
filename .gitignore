@@ -20,10 +20,10 @@
 /frontend/frontend_fthina/src/react-app-env.d.ts
 
 # Ignore SSL certificates (for security reasons)
-# Make sure to store them securely elsewhere
 /nginx/ssl/
 
-/__pycache__/
+# Ignore __pycache__ directories everywhere
+**/__pycache__/
 /*.py[cod]
 
 # Ignore Docker-related files if they're not needed
@@ -31,3 +31,9 @@
 
 # Ignore log files
 *.log
+
+# Ignore IDE-specific files (e.g., IntelliJ/PhpStorm/WebStorm, etc.)
+.idea/
+
+# Additional ignore rules
+/backend/backend/__pycache__/
