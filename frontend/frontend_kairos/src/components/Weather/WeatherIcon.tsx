@@ -1,4 +1,4 @@
-// src/components/Weather/WeatherIcon.tsx
+// src/components/WeatherIcon.tsx
 import React from 'react';
 import {
   RseClearDay,
@@ -33,7 +33,13 @@ interface WeatherIconProps {
   className?: string;
 }
 
-const WeatherIcon: React.FC<WeatherIconProps> = ({ state, width, height, color = 'black', className }) => {
+const WeatherIcon: React.FC<WeatherIconProps> = ({
+  state,
+  width,
+  height,
+  color = 'black',
+  className,
+}) => {
   const getIconComponent = (state: string): React.FC<any> => {
     switch (state) {
       case 'sunny':

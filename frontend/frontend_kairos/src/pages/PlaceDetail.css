@@ -1,42 +1,35 @@
+/* PlaceDetail.css */
+
+/* Container for the entire place detail page */
 .place-detail-container {
-  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 20px;
 }
 
+/* Styling for the main card containing place information */
 .place-detail-card {
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
+/* Styling for the weather forecast card */
 .weather-forecast-card {
-  border-radius: 8px;
-  margin-top: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
+/* Styling for the temperature chart card */
 .temperature-chart-card {
-  background-color: #fafafa;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-.ant-table {
-  margin-top: 10px;
-}
-
-.ant-table-thead > tr > th {
-  background-color: #f0f0f0;
-  font-weight: bold;
-}
-
-.ant-table-tbody > tr > td {
-  font-size: 14px;
-}
-
+/* Styling for the alert message */
 .alert-info {
   margin-top: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .place-detail-container {
+    padding: 10px;
+  }
 }

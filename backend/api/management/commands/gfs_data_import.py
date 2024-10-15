@@ -24,10 +24,6 @@ def extract_forecast_details_from_filename(filename):
             time_str = parts[2]  # e.g., '1100' or '110000'
             forecast_hour_str = parts[3].split('.')[0]  # e.g., 'f005'
 
-            # Log the extracted parts
-            logger.info(f"Filename: {filename}")
-            logger.info(f"Extracted date_str: {date_str}, time_str: {time_str}, forecast_hour_str: {forecast_hour_str}")
-
             # Clean time_str to remove any non-digit characters
             time_str_cleaned = re.sub(r'\D', '', time_str)
             time_str_length = len(time_str_cleaned)
@@ -42,8 +38,6 @@ def extract_forecast_details_from_filename(filename):
             else:
                 logger.error(f"Unexpected time format in filename {filename}: {time_str}")
                 return None, None
-
-            logger.info(f"Parsing datetime string: {datetime_str} with format: {format_str}")
 
             # Parse valid datetime
             valid_datetime = datetime.strptime(datetime_str, format_str).replace(tzinfo=timezone.utc)
@@ -67,22 +61,76 @@ def extract_forecast_details_from_filename(filename):
 
 def bulk_import_forecast_data(forecast_data):
     try:
-        GFSForecast.objects.bulk_create(
-            [GFSForecast(
-                place=data['place'],
-                latitude=data['latitude'],
-                longitude=data['longitude'],
-                date=data['date'],
-                hour=data['hour'],
-                utc_cycle_time=data['utc_cycle_time'],
-                forecast_data=data['forecast_data']
-                # Removed 'location' argument
-            ) for data in forecast_data],
-            batch_size=1000
+        # Step 1: Build a set of unique keys from forecast_data
+        unique_keys = set(
+            (data['place'].id, data['date'], data['hour'], data['utc_cycle_time'])
+            for data in forecast_data
         )
-        logger.info("Bulk inserted %d records", len(forecast_data))
+
+        # Step 2: Fetch existing records matching these keys
+        existing_records = GFSForecast.objects.filter(
+            place__in=[data['place'] for data in forecast_data],
+            date__in=[data['date'] for data in forecast_data],
+            hour__in=[data['hour'] for data in forecast_data],
+            utc_cycle_time__in=[data['utc_cycle_time'] for data in forecast_data]
+        )
+
+        existing_keys = set(
+            (record.place.id, record.date, record.hour, record.utc_cycle_time)
+            for record in existing_records
+        )
+
+        # Step 3: Separate new records and records to update
+        new_records = []
+        records_to_update = []
+
+        # Create a mapping for existing records to update
+        existing_records_dict = {
+            (record.place.id, record.date, record.hour, record.utc_cycle_time): record
+            for record in existing_records
+        }
+
+        for data in forecast_data:
+            key = (data['place'].id, data['date'], data['hour'], data['utc_cycle_time'])
+            if key in existing_keys:
+                # Update existing record
+                record = existing_records_dict[key]
+                record.latitude = data['latitude']
+                record.longitude = data['longitude']
+                # Update forecast_data dictionary
+                record.forecast_data.update(data['forecast_data'])
+                records_to_update.append(record)
+            else:
+                # Create new record
+                new_records.append(GFSForecast(
+                    place=data['place'],
+                    latitude=data['latitude'],
+                    longitude=data['longitude'],
+                    date=data['date'],
+                    hour=data['hour'],
+                    utc_cycle_time=data['utc_cycle_time'],
+                    forecast_data=data['forecast_data']
+                ))
+
+        # Step 4: Bulk create new records
+        if new_records:
+            GFSForecast.objects.bulk_create(new_records, batch_size=1000, ignore_conflicts=True)
+            logger.info("Bulk inserted %d new records", len(new_records))
+
+        # Step 5: Bulk update existing records
+        if records_to_update:
+            GFSForecast.objects.bulk_update(
+                records_to_update,
+                fields=['latitude', 'longitude', 'forecast_data'],
+                batch_size=1000
+            )
+            logger.info("Bulk updated %d existing records", len(records_to_update))
+
+        total_records = len(new_records) + len(records_to_update)
+        logger.info("Processed %d records (%d new, %d updated)", total_records, len(new_records), len(records_to_update))
+
     except Exception as e:
-        logger.error(f"Error during bulk insert: {e}")
+        logger.error(f"Error during bulk import: {e}")
 
 def process_grib_message(grib, valid_datetime, utc_cycle_time, places):
     forecast_data = []
@@ -132,10 +180,10 @@ def process_grib_message(grib, valid_datetime, utc_cycle_time, places):
 
         forecast_data.append(forecast_entry)
 
-    # Bulk insert the forecast data
+    # Bulk insert or update the forecast data
     bulk_import_forecast_data(forecast_data)
 
-def parse_and_import_gfs_data(file_path, chunk_size=10000):
+def parse_and_import_gfs_data(file_path):
     logger.info("Starting to parse GFS data from %s.", file_path)
 
     valid_datetime, utc_cycle_time = extract_forecast_details_from_filename(file_path)
@@ -184,7 +232,7 @@ class Command(BaseCommand):
         file_path = options['file']
         if file_path:
             logger.info(f"File path provided: {file_path}")
-            ...
+            parse_and_import_gfs_data(file_path)
         else:
             filtered_directory = 'data/filtered_data'
             logger.info(f"Looking for files in: {filtered_directory}")
