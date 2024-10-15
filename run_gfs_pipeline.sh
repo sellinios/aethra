@@ -1,13 +1,9 @@
 #!/bin/bash
 
-# Activate the virtual environment
-source /home/sellinios/aethra/venv/bin/activate
-
 # Change to the project directory
 cd /home/sellinios/aethra
 
-# Run the Django management command inside the Docker container
-docker-compose exec backend python manage.py run_gfs_pipeline
+# Run the Django management command inside the Docker container using the container's Python environment
+docker-compose exec backend /usr/local/bin/python manage.py run_gfs_pipeline
 
-# Deactivate the virtual environment (optional)
-deactivate
+# No need to deactivate the virtual environment, as it's not used inside the container

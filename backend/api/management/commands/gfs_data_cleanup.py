@@ -14,6 +14,7 @@ DATA_DIRECTORY = "data"
 COMBINED_DIRECTORY = os.path.join(DATA_DIRECTORY, "combined_data")
 
 def delete_tmp_files():
+    """Deletes temporary (.tmp) files in the data directory."""
     for root, dirs, files in os.walk(DATA_DIRECTORY):
         for file in files:
             if file.endswith('.tmp'):
@@ -25,6 +26,7 @@ def delete_tmp_files():
                     logger.error(f"Failed to delete {file_path}: {e}")
 
 def cleanup_old_gfs_data():
+    """Cleans up old GFS data folders and non-essential directories."""
     # Number of days to keep
     days_to_keep = 2
 
@@ -33,11 +35,16 @@ def cleanup_old_gfs_data():
     cutoff_date = current_date - timedelta(days=days_to_keep - 1)
     logger.info(f"Deleting GFS data folders with date before {cutoff_date}")
 
-    # List all data folders excluding 'combined_data'
+    # List all folders in the data directory
     data_folders = [f for f in os.listdir(DATA_DIRECTORY)
-                    if os.path.isdir(os.path.join(DATA_DIRECTORY, f)) and f != "combined_data"]
+                    if os.path.isdir(os.path.join(DATA_DIRECTORY, f))]
 
     for folder_name in data_folders:
+        # Skip the 'combined_data' and 'filtered_data' folders
+        if folder_name == "combined_data" or folder_name == "filtered_data":
+            continue
+
+        # Attempt to parse folder names that contain dates (like 20241015_12)
         parts = folder_name.split('_')
         if len(parts) >= 2:
             date_str = parts[0]
@@ -51,7 +58,16 @@ def cleanup_old_gfs_data():
                     except Exception as e:
                         logger.error(f"Failed to delete folder {folder_path}: {e}")
             except ValueError:
+                logger.warning(f"Skipping folder with non-date format: {folder_name}")
                 continue
+        else:
+            # Handle non-date folders that should be deleted
+            folder_path = os.path.join(DATA_DIRECTORY, folder_name)
+            try:
+                shutil.rmtree(folder_path)
+                logger.info(f"Deleted old folder: {folder_path}")
+            except Exception as e:
+                logger.error(f"Failed to delete folder {folder_path}: {e}")
 
     # Clean up old combined data files
     if os.path.exists(COMBINED_DIRECTORY):
@@ -73,6 +89,7 @@ def cleanup_old_gfs_data():
                         continue
 
 def delete_old_gfs_forecast_entries():
+    """Deletes old GFSForecast entries from the database."""
     # Number of days to keep
     days_to_keep = 2
 
@@ -86,6 +103,7 @@ def delete_old_gfs_forecast_entries():
     logger.info(f"Deleted {num_deleted} old GFSForecast entries with date before {cutoff_date}")
 
 def cleanup_data():
+    """Runs the full cleanup process for GFS data, temp files, and old database entries."""
     logger.info("Starting cleanup of data.")
 
     # Step 1: Delete .tmp files
