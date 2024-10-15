@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next'; // Import translation hook
 import { Card, Spin, Alert, Table, Typography } from 'antd';
 import moment from 'moment';
 import WeatherIcon from '../components/Weather/WeatherIcon'; // Ensure the correct path
@@ -35,6 +36,7 @@ interface PlaceData {
 }
 
 const PlaceDetail: React.FC = () => {
+  const { t } = useTranslation(); // Translation function
   const {
     continentSlug,
     countrySlug,
@@ -74,11 +76,11 @@ const PlaceDetail: React.FC = () => {
   }, [countrySlug, regionSlug, municipalitySlug, placeSlug]);
 
   if (loading) {
-    return <Spin tip="Loading..." />;
+    return <Spin tip={t('loading')} />; // Using translation for "Loading..."
   }
 
   if (error) {
-    return <Alert message="Error" description={error} type="error" showIcon />;
+    return <Alert message={t('error')} description={error} type="error" showIcon />; // Using translation for "Error"
   }
 
   if (!placeData) {
@@ -114,10 +116,10 @@ const PlaceDetail: React.FC = () => {
 
   // Define time periods
   const timePeriods = [
-    { name: 'Night', startHour: 0, endHour: 6 },
-    { name: 'Morning', startHour: 6, endHour: 12 },
-    { name: 'Afternoon', startHour: 12, endHour: 18 },
-    { name: 'Evening', startHour: 18, endHour: 24 },
+    { name: t('night'), startHour: 0, endHour: 6 },
+    { name: t('morning'), startHour: 6, endHour: 12 },
+    { name: t('afternoon'), startHour: 12, endHour: 18 },
+    { name: t('evening'), startHour: 18, endHour: 24 },
   ];
 
   // Process weather data
@@ -225,7 +227,7 @@ const PlaceDetail: React.FC = () => {
   // Define table columns
   const columns = [
     {
-      title: 'Date',
+      title: t('date'),
       dataIndex: 'date',
       key: 'date',
       render: (date: string) => moment(date).format('dddd, MMM D'),
@@ -255,14 +257,14 @@ const PlaceDetail: React.FC = () => {
             <br />
             <Text>
               {data.precipitation !== undefined
-                ? `Precip: ${data.precipitation.toFixed(1)} mm`
-                : 'Precip: N/A'}
+                ? `${t('precip')}: ${data.precipitation.toFixed(1)} mm`
+                : `${t('precip')}: N/A`}
             </Text>
             <br />
             <Text>
               {data.windSpeed !== undefined
-                ? `Wind: ${data.windSpeed.toFixed(1)} m/s`
-                : 'Wind: N/A'}
+                ? `${t('wind')}: ${data.windSpeed.toFixed(1)} m/s`
+                : `${t('wind')}: N/A`}
             </Text>
           </div>
         );
@@ -274,13 +276,13 @@ const PlaceDetail: React.FC = () => {
   const expandedRowRender = (record: DayData) => {
     const hourlyColumns = [
       {
-        title: 'Time',
+        title: t('time'),
         dataIndex: 'datetime',
         key: 'datetime',
         render: (datetime: string) => moment(datetime).format('HH:mm'),
       },
       {
-        title: 'Condition',
+        title: t('condition'),
         dataIndex: 'weather_condition',
         key: 'weather_condition',
         render: (condition: string, entry: WeatherDataEntry) => {
@@ -301,19 +303,19 @@ const PlaceDetail: React.FC = () => {
         },
       },
       {
-        title: 'Temp (°C)',
+        title: t('temp'),
         dataIndex: 'temperature_celsius',
         key: 'temperature_celsius',
         render: (temp: number) => `${temp}°C`,
       },
       {
-        title: 'Precip (mm)',
+        title: t('precip'),
         dataIndex: 'total_precipitation_mm',
         key: 'total_precipitation_mm',
         render: (precip: number) => `${precip.toFixed(1)} mm`,
       },
       {
-        title: 'Wind (m/s)',
+        title: t('wind'),
         dataIndex: 'wind_speed_m_s',
         key: 'wind_speed_m_s',
         render: (wind: number) => `${wind.toFixed(1)} m/s`,
@@ -338,15 +340,15 @@ const PlaceDetail: React.FC = () => {
   return (
     <div className="place-detail-container">
       <Card className="place-detail-card">
-        <Title level={2}>{placeData.name}</Title>
+        <Title level={2}>{t('place_details')}: {placeData.name}</Title>
         {placeData.description && <Text>{placeData.description}</Text>}
         <br />
         <Text>
-          <strong>Location:</strong> {placeData.latitude}, {placeData.longitude}
+          <strong>{t('location')}:</strong> {placeData.latitude}, {placeData.longitude}
         </Text>
         <br />
         <Text>
-          <strong>Elevation:</strong> {placeData.elevation} meters
+          <strong>{t('elevation')}:</strong> {placeData.elevation} meters
         </Text>
       </Card>
 
@@ -354,7 +356,7 @@ const PlaceDetail: React.FC = () => {
       {currentWeather && <CurrentConditions currentData={currentWeather} />}
 
       {/* Weather Forecast */}
-      <Card title="Weather Forecast" className="daily-forecast-card">
+      <Card title={t('weather_forecast')} className="daily-forecast-card">
         <Table
           columns={columns}
           dataSource={dayDataArray}

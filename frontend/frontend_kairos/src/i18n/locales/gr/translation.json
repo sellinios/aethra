@@ -1,7 +1,18 @@
 {
-  "home": "Home",
-  "about": "About Us",
-  "contact": "Contact",
-  "login": "Login",
-  "register": "Register"
+  "loading": "Φόρτωση...",
+  "error": "Σφάλμα",
+  "place_details": "Λεπτομέρειες Τοποθεσίας",
+  "location": "Τοποθεσία",
+  "elevation": "Υψόμετρο",
+  "weather_forecast": "Πρόβλεψη Καιρού",
+  "date": "Ημερομηνία",
+  "temp": "Θερμοκρασία",
+  "precip": "Βροχόπτωση",
+  "wind": "Άνεμος",
+  "condition": "Κατάσταση",
+  "time": "Χρόνος",
+  "night": "Νύχτα",
+  "morning": "Πρωί",
+  "afternoon": "Απόγευμα",
+  "evening": "Βράδυ"
 }
