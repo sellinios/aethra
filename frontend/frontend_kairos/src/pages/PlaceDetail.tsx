@@ -1,8 +1,11 @@
+// src/pages/PlaceDetail.tsx
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, Spin, Alert, Table, Typography } from 'antd';
 import moment from 'moment';
 import WeatherIcon from '../components/Weather/WeatherIcon'; // Ensure the correct path
+import CurrentConditions from '../components/Weather/CurrentConditions'; // Import the component
 import './PlaceDetail.css';
 
 const { Title, Text } = Typography;
@@ -51,7 +54,7 @@ const PlaceDetail: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const apiUrl = `/api/${countrySlug}/${regionSlug}/${municipalitySlug}/${placeSlug}/`;
+    const apiUrl = `/api/${countrySlug}/${regionSlug}/${municipalitySlug}/${placeSlug}/`; // Including placeSlug
 
     fetch(apiUrl)
       .then((response) => {
@@ -120,10 +123,10 @@ const PlaceDetail: React.FC = () => {
   // Process weather data
   const now = moment();
 
-  // Next 7 days data
-  const next7DaysData = placeData.weather_data.filter((entry) => {
+  // Use all future data
+  const futureData = placeData.weather_data.filter((entry) => {
     const entryTime = moment(entry.datetime);
-    return entryTime.isSameOrAfter(now) && entryTime.isBefore(now.clone().add(7, 'days'));
+    return entryTime.isSameOrAfter(now);
   });
 
   // Group data by date and time period
@@ -149,7 +152,7 @@ const PlaceDetail: React.FC = () => {
   // Group data by date
   const dailyDataMap = new Map<string, WeatherDataEntry[]>();
 
-  next7DaysData.forEach((entry) => {
+  futureData.forEach((entry) => {
     const date = moment(entry.datetime).format('YYYY-MM-DD');
     if (!dailyDataMap.has(date)) {
       dailyDataMap.set(date, []);
@@ -324,9 +327,13 @@ const PlaceDetail: React.FC = () => {
         pagination={false}
         rowKey="datetime"
         size="small"
+        className="hourly-table"
       />
     );
   };
+
+  // Determine current weather data
+  const currentWeather = placeData.weather_data.length > 0 ? placeData.weather_data[0] : null;
 
   return (
     <div className="place-detail-container">
@@ -343,13 +350,18 @@ const PlaceDetail: React.FC = () => {
         </Text>
       </Card>
 
-      <Card title="7-Day Forecast" className="daily-forecast-card">
+      {/* Current Conditions */}
+      {currentWeather && <CurrentConditions currentData={currentWeather} />}
+
+      {/* Weather Forecast */}
+      <Card title="Weather Forecast" className="daily-forecast-card">
         <Table
           columns={columns}
           dataSource={dayDataArray}
           expandable={{ expandedRowRender }}
           scroll={{ x: true }}
           pagination={false}
+          className="forecast-table"
         />
       </Card>
     </div>
