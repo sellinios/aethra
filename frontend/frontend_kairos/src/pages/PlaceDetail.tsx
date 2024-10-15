@@ -1,9 +1,9 @@
-// src/pages/PlaceDetail.tsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Table, Card, Spin, Alert } from 'antd';
 import moment from 'moment';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import './PlaceDetail.css';  // Import the CSS file
 
 interface WeatherDataEntry {
   datetime: string;
@@ -33,7 +33,6 @@ const PlaceDetail: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Construct the API URL using the dynamic parameters
     const apiUrl = `/api/${countrySlug}/${regionSlug}/${municipalitySlug}/${placeSlug}/`;
 
     fetch(apiUrl)
@@ -65,12 +64,10 @@ const PlaceDetail: React.FC = () => {
     return null;
   }
 
-  // Prepare weather data for display
   const parameterUnits: { [key: string]: string } = {
     temperature_celsius: '°C',
     relative_humidity_percent: '%',
     wind_speed_m_s: 'm/s',
-    // Add more parameters and their units as needed
   };
 
   const weatherColumns = [
@@ -83,9 +80,7 @@ const PlaceDetail: React.FC = () => {
     ...Object.keys(placeData.weather_data[0] || {})
       .filter((key) => key !== 'datetime')
       .map((key) => ({
-        title: `${key
-          .replace(/_/g, ' ')
-          .replace(/\b\w/g, (l) => l.toUpperCase())} ${
+        title: `${key.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())} ${
           parameterUnits[key] ? `(${parameterUnits[key]})` : ''
         }`,
         dataIndex: key,
@@ -100,8 +95,8 @@ const PlaceDetail: React.FC = () => {
   }));
 
   return (
-    <div style={{ padding: '20px' }}>
-      <Card title={placeData.name}>
+    <div className="place-detail-container">
+      <Card title={placeData.name} className="place-detail-card">
         {placeData.description && <p>{placeData.description}</p>}
         <p>
           <strong>Location:</strong> {placeData.latitude}, {placeData.longitude}
@@ -113,7 +108,7 @@ const PlaceDetail: React.FC = () => {
 
       {placeData.weather_data && placeData.weather_data.length > 0 ? (
         <>
-          <Card title="Weather Forecast" style={{ marginTop: '20px' }}>
+          <Card title="Weather Forecast" className="weather-forecast-card">
             <Table
               dataSource={placeData.weather_data}
               columns={weatherColumns}
@@ -122,7 +117,7 @@ const PlaceDetail: React.FC = () => {
             />
           </Card>
 
-          <Card title="Temperature Over Time" style={{ marginTop: '20px' }}>
+          <Card title="Temperature Over Time" className="temperature-chart-card">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={temperatureData}>
                 <XAxis dataKey="datetime" />
@@ -140,7 +135,7 @@ const PlaceDetail: React.FC = () => {
           </Card>
         </>
       ) : (
-        <Alert message="No weather data available." type="info" showIcon style={{ marginTop: '20px' }} />
+        <Alert message="No weather data available." type="info" showIcon className="alert-info" />
       )}
     </div>
   );

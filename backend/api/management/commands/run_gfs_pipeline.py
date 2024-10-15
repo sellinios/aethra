@@ -14,7 +14,6 @@ class Command(BaseCommand):
             'gfs_data_download',
             'gfs_data_filtered',
             'gfs_data_import',
-            'gfs_data_cleanup_tmp',
             'gfs_data_cleanup',
         ]
 

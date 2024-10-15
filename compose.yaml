@@ -1,6 +1,8 @@
 services:
   db:
     image: postgis/postgis:latest
+    ports:
+      - "5436:5432"  # Expose PostgreSQL on port 5434 of your host
     env_file:
       - ./backend/.env.production
     volumes:

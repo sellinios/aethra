@@ -66,7 +66,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--base_url', type=str, default="https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod")
-        parser.add_argument('--max_hours', type=int, default=12, help='Maximum number of forecast hours to download')
+        parser.add_argument('--max_hours', type=int, default=120, help='Maximum number of forecast hours to download')
         parser.add_argument('--dry_run', action='store_true', help='Run the script without actually downloading files')
 
     def handle(self, *args, **options):

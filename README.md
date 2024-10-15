@@ -86,6 +86,7 @@ Run migrations and collect static files:
 
 ```bash
 docker-compose exec backend python manage.py migrate
+docker-compose exec backend python manage.py run_gfs_pipeline
 docker-compose exec backend python manage.py collectstatic --noinput
 ```
 

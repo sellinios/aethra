@@ -19,30 +19,60 @@ logger = logging.getLogger(__name__)
 PARAMETER_MAPPING = {
     '2t_level_2_heightAboveGround': {
         'name': 'temperature_celsius',
-        'conversion': lambda k: round(k - 273.15, 2) if k is not None else None
-    },
-    'sp_level_0_surface': {
-        'name': 'surface_pressure_hPa',
-        'conversion': lambda p: round(p / 100.0, 2) if p is not None else None  # Convert Pa to hPa
+        'conversion': lambda k: round(k - 273.15, 2) if k is not None else None  # Convert Kelvin to Celsius
     },
     'r_level_2_heightAboveGround': {
         'name': 'relative_humidity_percent',
-        'conversion': lambda r: round(r, 2) if r is not None else None
+        'conversion': lambda r: round(r, 2) if r is not None else None  # Relative Humidity in %
+    },
+    'wind_speed_gust_surface': {
+        'name': 'wind_gust_speed_m_s',
+        'conversion': lambda x: round(x, 2) if x is not None else None  # Wind gust speed in m/s
+    },
+    '10u_level_10_heightAboveGround': {
+        'name': 'u_component_wind_m_s',
+        'conversion': lambda x: round(x, 2) if x is not None else None  # U-component of wind at 10 meters (m/s)
+    },
+    '10v_level_10_heightAboveGround': {
+        'name': 'v_component_wind_m_s',
+        'conversion': lambda x: round(x, 2) if x is not None else None  # V-component of wind at 10 meters (m/s)
     },
     'tp_level_0_surface': {
         'name': 'total_precipitation_mm',
-        'conversion': lambda tp: round(tp, 2) if tp is not None else None
+        'conversion': lambda tp: round(tp, 2) if tp is not None else None  # Total precipitation in mm
     },
-    '10u_level_10_heightAboveGround': {
-        'name': 'wind_u_component',
-        'conversion': lambda x: x
+    'sp_level_0_surface': {
+        'name': 'surface_pressure_hPa',
+        'conversion': lambda p: round(p / 100.0, 2) if p is not None else None  # Surface Pressure in hPa
     },
-    '10v_level_10_heightAboveGround': {
-        'name': 'wind_v_component',
-        'conversion': lambda x: x
+    'meanSea': {
+        'name': 'mean_sea_level_pressure_hPa',
+        'conversion': lambda p: round(p / 100.0, 2) if p is not None else None  # Pressure reduced to MSL in hPa
     },
-    # Add more parameters as needed
+    'convective_precipitation_rate_surface': {
+        'name': 'convective_precipitation_rate',
+        'conversion': lambda x: round(x, 2) if x is not None else None  # Convective precipitation rate
+    },
+    'high_cloud_cover_highCloudLayer': {
+        'name': 'high_cloud_cover',
+        'conversion': lambda x: round(x, 2) if x is not None else None  # High cloud cover
+    },
+    'low_cloud_cover_lowCloudLayer': {
+        'name': 'low_cloud_cover',
+        'conversion': lambda x: round(x, 2) if x is not None else None  # Low cloud cover
+    },
+    'medium_cloud_cover_middleCloudLayer': {
+        'name': 'medium_cloud_cover',
+        'conversion': lambda x: round(x, 2) if x is not None else None  # Medium cloud cover
+    },
+    'precipitation_rate_surface': {
+        'name': 'precipitation_rate',
+        'conversion': lambda x: round(x, 2) if x is not None else None  # Precipitation rate
+    },
 }
+
+
+
 
 def place_detail(request, country_slug=None, region_slug=None, municipality_slug=None, place_slug=None):
     latitude = request.GET.get('latitude')
@@ -122,10 +152,10 @@ def get_weather_data_for_place(place):
     from django.db.models import Max, OuterRef, Subquery, F
 
     now = timezone.now()
-    start_time = now - timedelta(hours=12)
-    end_time = now + timedelta(hours=12)
+    start_time = now - timedelta(hours=48)  # Show data starting from 48 hours in the past
+    end_time = now + timedelta(hours=48)    # Show data up to 48 hours in the future
 
-    # Step 1: Retrieve forecasts for the place within the date range
+    # Step 1: Retrieve forecasts for the place within the extended date range
     forecasts = GFSForecast.objects.filter(
         place=place,
         date__gte=start_time.date(),
