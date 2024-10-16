@@ -5,18 +5,16 @@ from django.contrib.gis.db import models as gis_models
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
-from django.urls import reverse  # Import reverse for URL construction
+from django.urls import reverse
 from parler.models import TranslatableModel, TranslatedFields
 from unidecode import unidecode
-from .model_geographic_category import GeographicCategory
-from .model_geographic_division import GeographicDivision
 
 class GeographicPlace(TranslatableModel):
     id = models.AutoField(primary_key=True)
     translations = TranslatedFields(
         name=models.CharField(max_length=255, null=True, blank=True),
         slug=models.SlugField(max_length=255, blank=True),
-        description=models.TextField(null=True, blank=True),  # Added description field
+        description=models.TextField(null=True, blank=True),
     )
     longitude = models.FloatField()
     latitude = models.FloatField()
@@ -57,61 +55,56 @@ class GeographicPlace(TranslatableModel):
         if self.elevation is None:
             self.elevation = 0
 
-        # Save the object initially to get a primary key (if new)
-        if not self.pk:
+        # Save first to get an ID if it's a new object
+        if not self.id:
             super().save(*args, **kwargs)
 
         # Ensure language handling is correct
         for lang in self.get_available_languages():
-            # Ensure lang is always a string, handle lists/tuples properly
-            lang_code = lang if isinstance(lang, str) else lang[0]
-            self.set_current_language(lang_code)
-
-            # Set a default name if it's missing
+            self.set_current_language(lang)
             if not self.safe_translation_getter('name'):
                 self.name = "To Be Defined"
 
-            # Set the slug if it's missing
-            if not self.safe_translation_getter('slug'):
-                self.slug = slugify(unidecode(self.name))
+            # Generate the base slug
+            name = self.safe_translation_getter('name')
+            base_slug = slugify(unidecode(name))
 
-        # Save again to persist the translations
+            # Include language code and ID in the slug to ensure uniqueness
+            unique_slug = f"{base_slug}-{lang}-{self.id}"
+
+            # Assign the slug
+            self.slug = unique_slug
+
         super().save(*args, **kwargs)
 
-    # Add the get_absolute_url method
     def get_absolute_url(self):
         return reverse('place_detail', kwargs={
             'continent_slug': self.get_continent_slug(),
             'country_slug': self.get_country_slug(),
             'region_slug': self.get_region_slug(),
-            'municipality_slug': self.admin_division.slug,
+            'municipality_slug': self.admin_division.safe_translation_getter('slug'),
             'place_slug': self.safe_translation_getter('slug'),
         })
 
-    # Helper methods to get continent, country, and region slugs
-    def get_continent_slug(self):
-        # Traverse up the admin division hierarchy to find the continent
+    # Helper methods to get slugs
+    def get_continent_slug(self, language=None):
         division = self.admin_division
         while division.parent is not None:
             division = division.parent
-        return division.slug  # Assuming this is the continent slug
+        return division.safe_translation_getter('slug', language_code=language, any_language=True)
 
-    def get_country_slug(self):
-        # Traverse up the admin division hierarchy to find the country
+    def get_country_slug(self, language=None):
         division = self.admin_division
         while division.parent is not None:
             if division.parent.parent is None:
-                # Found the country level
-                return division.slug
+                return division.safe_translation_getter('slug', language_code=language, any_language=True)
             division = division.parent
-        return division.slug  # Fallback in case the loop doesn't find the country
+        return division.safe_translation_getter('slug', language_code=language, any_language=True)
 
-    def get_region_slug(self):
-        # Traverse up the admin division hierarchy to find the region
+    def get_region_slug(self, language=None):
         division = self.admin_division
         while division.parent is not None:
             if division.parent.parent is not None and division.parent.parent.parent is None:
-                # Found the region level
-                return division.slug
+                return division.safe_translation_getter('slug', language_code=language, any_language=True)
             division = division.parent
-        return division.slug  # Fallback in case the loop doesn't find the region
+        return division.safe_translation_getter('slug', language_code=language, any_language=True)

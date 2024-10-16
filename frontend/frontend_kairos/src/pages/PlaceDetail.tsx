@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // Import translation hook
+import { useTranslation } from 'react-i18next';
 import { Card, Spin, Alert, Table, Typography } from 'antd';
 import moment from 'moment';
-import WeatherIcon from '../components/Weather/WeatherIcon'; // Ensure the correct path
-import CurrentConditions from '../components/Weather/CurrentConditions'; // Import the component
+import WeatherIcon from '../components/Weather/WeatherIcon';
+import CurrentConditions from '../components/Weather/CurrentConditions';
 import './PlaceDetail.css';
 
 const { Title, Text } = Typography;
@@ -36,7 +36,7 @@ interface PlaceData {
 }
 
 const PlaceDetail: React.FC = () => {
-  const { t } = useTranslation(); // Translation function
+  const { t, i18n } = useTranslation();
   const {
     continentSlug,
     countrySlug,
@@ -56,31 +56,32 @@ const PlaceDetail: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const apiUrl = `${process.env.REACT_APP_API_URL}api/${countrySlug}/${regionSlug}/${municipalitySlug}/${placeSlug}/`; // Including placeSlug
-
-    fetch(apiUrl)
-      .then((response) => {
+    const fetchPlaceData = async () => {
+      const apiUrl = `${process.env.REACT_APP_API_URL}/${i18n.language}/api/${countrySlug}/${regionSlug}/${municipalitySlug}/${placeSlug}/`;
+      try {
+        const response = await fetch(apiUrl);
         if (!response.ok) {
-          throw new Error('Failed to fetch place details');
+          const errorMessage = await response.text();
+          throw new Error(`Failed to fetch place details: ${response.status} ${response.statusText} - ${errorMessage}`);
         }
-        return response.json();
-      })
-      .then((data) => {
+        const data: PlaceData = await response.json();
         setPlaceData(data);
-        setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error: any) {
+        console.error('Error fetching place details:', error);
         setError(error.message);
+      } finally {
         setLoading(false);
-      });
-  }, [countrySlug, regionSlug, municipalitySlug, placeSlug]);
+      }
+    };
+    fetchPlaceData();
+  }, [countrySlug, regionSlug, municipalitySlug, placeSlug, i18n.language]);
 
   if (loading) {
-    return <Spin tip={t('loading')} />; // Using translation for "Loading..."
+    return <Spin tip={t('loading')} />;
   }
 
   if (error) {
-    return <Alert message={t('error')} description={error} type="error" showIcon />; // Using translation for "Error"
+    return <Alert message={t('error')} description={error} type="error" showIcon />;
   }
 
   if (!placeData) {
@@ -110,7 +111,7 @@ const PlaceDetail: React.FC = () => {
     } else if (normalizedCondition.includes('thunder')) {
       return 'thunder';
     } else {
-      return 'cloudy'; // Default icon
+      return 'cloudy';
     }
   };
 
@@ -174,13 +175,13 @@ const PlaceDetail: React.FC = () => {
       if (periodEntries.length > 0) {
         const temperatures = periodEntries
           .map((e) => e.temperature_celsius)
-          .filter((t) => t !== undefined) as number[];
+          .filter((t): t is number => t !== undefined);
         const precipitations = periodEntries
           .map((e) => e.total_precipitation_mm)
-          .filter((p) => p !== undefined) as number[];
+          .filter((p): p is number => p !== undefined);
         const windSpeeds = periodEntries
           .map((e) => e.wind_speed_m_s)
-          .filter((w) => w !== undefined) as number[];
+          .filter((w): w is number => w !== undefined);
 
         const temperatureHigh = temperatures.length ? Math.max(...temperatures) : undefined;
         const temperatureLow = temperatures.length ? Math.min(...temperatures) : undefined;
@@ -220,7 +221,7 @@ const PlaceDetail: React.FC = () => {
       key: date,
       date,
       periods: periodsData,
-      hourlyData: entries, // For expandable rows
+      hourlyData: entries,
     });
   });
 
@@ -231,7 +232,7 @@ const PlaceDetail: React.FC = () => {
       dataIndex: 'date',
       key: 'date',
       render: (date: string) => moment(date).format('dddd, MMM D'),
-      fixed: 'left' as 'left',
+      fixed: 'left' as const,
       width: 150,
     },
     ...timePeriods.map((period) => ({
@@ -335,12 +336,17 @@ const PlaceDetail: React.FC = () => {
   };
 
   // Determine current weather data
-  const currentWeather = placeData.weather_data.length > 0 ? placeData.weather_data[0] : null;
+  const currentWeather = placeData.weather_data.find((entry) =>
+    moment(entry.datetime).isSameOrBefore(moment())
+  );
 
+  // **Add the return statement here**
   return (
     <div className="place-detail-container">
       <Card className="place-detail-card">
-        <Title level={2}>{t('place_details')}: {placeData.name}</Title>
+        <Title level={2}>
+          {t('place_details')}: {placeData.name}
+        </Title>
         {placeData.description && <Text>{placeData.description}</Text>}
         <br />
         <Text>
@@ -364,6 +370,7 @@ const PlaceDetail: React.FC = () => {
           scroll={{ x: true }}
           pagination={false}
           className="forecast-table"
+          rowKey="key"
         />
       </Card>
     </div>

@@ -1,62 +1,80 @@
+// src/components/NearestPlace.jsx
+
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import PropTypes from 'prop-types';
 
 function NearestPlace() {
+  const { t, i18n } = useTranslation();
   const [placeData, setPlaceData] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const fetchNearestPlace = async (latitude, longitude) => {
+      try {
+        // Construct the API URL safely
+        const apiUrl = `${process.env.REACT_APP_API_URL}/${i18n.language}/api/place/?latitude=${latitude}&longitude=${longitude}`;
+
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+          const errorMessage = await response.text();
+          throw new Error(`Error fetching data: ${response.status} ${response.statusText} - ${errorMessage}`);
+        }
+
+        const data = await response.json();
+
+        // Set the place data
+        setPlaceData(data);
+      } catch (err) {
+        console.error('Error fetching nearest place:', err);
+        setError(t('error_fetching_nearest_place'));
+      }
+    };
+
     // Check if geolocation is available
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-
-          // Use the environment variable for the API base URL
-          const apiUrl = `${process.env.REACT_APP_API_URL}/api/place/?latitude=${latitude}&longitude=${longitude}`;
-
-          // Fetch the nearest place from your API
-          fetch(apiUrl)
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-              // Access the custom header
-              const nearestPlaceUrl = response.headers.get('Nearest-Place-URL');
-              return response.json().then((data) => ({ data, nearestPlaceUrl }));
-            })
-            .then(({ data, nearestPlaceUrl }) => {
-              setPlaceData({ ...data, url: nearestPlaceUrl });
-            })
-            .catch((error) => {
-              setError(error.toString());
-            });
+          fetchNearestPlace(latitude, longitude);
         },
-        (error) => {
-          setError('Error getting geolocation: ' + error.message);
+        (geoError) => {
+          console.error('Geolocation error:', geoError);
+          if (geoError.code === geoError.PERMISSION_DENIED) {
+            setError(t('geolocation_permission_denied'));
+          } else {
+            setError(`${t('error_getting_geolocation')}: ${geoError.message}`);
+          }
         }
       );
     } else {
-      setError('Geolocation is not available in this browser.');
+      setError(t('geolocation_not_available'));
     }
-  }, []);
+  }, [i18n.language, t]);
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>{t('error')}: {error}</div>;
   }
 
   if (!placeData) {
-    return <div>Loading...</div>;
+    return <div>{t('loading')}</div>;
   }
 
   return (
     <div>
-      <h1>Nearest Place: {placeData.name}</h1>
+      <h2>{t('nearest_place')}: {placeData.name}</h2>
       {placeData.description && <p>{placeData.description}</p>}
       <p>
-        Location: {placeData.latitude}, {placeData.longitude}
+        {t('location')}: {placeData.latitude}, {placeData.longitude}
       </p>
-      <p>Elevation: {placeData.elevation}</p>
-      <a href={placeData.url}>View Details</a>
+      <p>{t('elevation')}: {placeData.elevation}</p>
+      {/* Link to the place detail page */}
+      <a
+        href={`/${placeData.continent_slug}/${placeData.country_slug}/${placeData.region_slug}/${placeData.municipality_slug}/${placeData.place_slug}/`}
+      >
+        {t('view_details')}
+      </a>
     </div>
   );
 }
