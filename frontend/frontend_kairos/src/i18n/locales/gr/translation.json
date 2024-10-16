@@ -23,6 +23,6 @@
   "login": "Σύνδεση",
   "register": "Εγγραφή",
   "nearest_place": "Πλησιέστερος τόπος",
-  "error_geolocation": "Σφάλμα τοποθεσίας",
-  "geolocation_not_available": "Η τοποθεσία δεν είναι διαθέσιμη"
+  "error_geolocation": "Σφάλμα κατά τη λήψη γεωγραφικής τοποθεσίας",
+  "geolocation_not_available": "Η γεωγραφική τοποθεσία δεν είναι διαθέσιμη σε αυτόν τον περιηγητή."
 }

@@ -3,7 +3,7 @@
 from django.urls import path
 from .views.view_geography_planet import planet_count, planet_list
 from .views.view_health import health_check
-from .views.view_geography_municipality import MunicipalityList
+from .views.view_geography_ListMunicipality import MunicipalityList
 from .views.view_geography_place import place_detail
 
 urlpatterns = [

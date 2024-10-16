@@ -1,7 +1,8 @@
-// src/components/TopBar/TopBar.tsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import './TopBar.css'; // Import the CSS file
+import { useTranslation } from 'react-i18next';
+import { Container, Row, Col } from 'react-bootstrap';
+import './TopBar.css';
 
 interface PlaceData {
   name: string;
@@ -9,10 +10,15 @@ interface PlaceData {
   latitude: number;
   longitude: number;
   elevation: number;
-  url?: string;
+  continent_slug: string;
+  country_slug: string;
+  region_slug: string;
+  municipality_slug: string;  // Use this to show municipality
+  place_slug: string;
 }
 
 const TopBar: React.FC = () => {
+  const { t } = useTranslation();
   const [placeData, setPlaceData] = useState<PlaceData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,33 +32,44 @@ const TopBar: React.FC = () => {
               if (!response.ok) {
                 throw new Error('Network response was not ok');
               }
-              const nearestPlaceUrl = response.headers.get('Nearest-Place-URL');
-              return response.json().then((data) => ({ data, nearestPlaceUrl }));
+              return response.json();
             })
-            .then(({ data, nearestPlaceUrl }) => {
-              setPlaceData({ ...data, url: nearestPlaceUrl });
+            .then((data) => {
+              setPlaceData(data);
             })
             .catch((error) => {
               setError(error.toString());
             });
         },
         (error) => {
-          setError('Error getting geolocation: ' + error.message);
+          setError(t('error_geolocation') + ': ' + error.message);
         }
       );
     } else {
-      setError('Geolocation is not available in this browser.');
+      setError(t('geolocation_not_available'));
     }
-  }, []);
+  }, [t]);
 
   return (
     <div className="top-bar">
-      {placeData && (
-        <div className="nearest-place-info">
-          Nearest Place: <Link to={placeData.url || '#'}>{placeData.name}</Link>
-        </div>
-      )}
-      {error && <div className="error">{error}</div>}
+      <Container fluid>
+        <Row className="align-items-center">
+          <Col md={12} className="text-center">
+            {placeData && (
+              <div className="nearest-place-info">
+                {t('nearest_municipality')}: {' '}
+                <Link
+                  to={`/${placeData.continent_slug}/${placeData.country_slug}/${placeData.region_slug}/${placeData.municipality_slug}/`}
+                  className="nearest-place-link"
+                >
+                  {placeData.municipality_slug} {/* Display municipality instead of place */}
+                </Link>
+              </div>
+            )}
+            {error && <div className="error">{error}</div>}
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 };

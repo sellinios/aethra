@@ -1,0 +1,80 @@
+/* src/pages/MunicipalityDetail.css */
+
+.municipality-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.municipality-detail-card {
+  background-color: #ffffff; /* White background for card */
+  border: 1px solid #e0e0e0; /* Light border for separation */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for card depth */
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.municipality-detail-card h2 {
+  font-size: 24px;
+  color: #333333; /* Darker text for contrast */
+  margin-bottom: 10px;
+}
+
+.municipality-detail-card .ant-typography {
+  font-size: 16px;
+  color: #555555; /* Slightly lighter text for secondary content */
+}
+
+.municipality-detail-card .ant-typography strong {
+  color: #333333; /* Make strong elements darker */
+}
+
+.municipality-detail-card .ant-typography + .ant-typography {
+  margin-top: 10px; /* Add space between text elements */
+}
+
+/* Table for expanded rows (if needed) */
+.hourly-table {
+  margin-top: 10px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.hourly-table th,
+.hourly-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.hourly-table th {
+  background-color: #f8f8f8;
+  color: #333333;
+}
+
+.hourly-table td {
+  color: #555555;
+}
+
+/* Utility classes */
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.alert-error {
+  color: red;
+}
+
+.spinner {
+  margin-top: 20px;
+  text-align: center;
+}

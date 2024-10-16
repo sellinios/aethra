@@ -1,6 +1,6 @@
-// src/App.tsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import TopBar from './components/TopBar/TopBar';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import HomePage from './pages/HomePage';
@@ -9,14 +9,16 @@ import ContactPage from './pages/ContactPage';
 import Municipalities from './pages/Municipalities';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import PlaceDetail from './pages/PlaceDetail'; // Import the PlaceDetail component
-import './App.css'; // Import global styles
-import 'bootstrap/dist/css/bootstrap.min.css'; // Bootstrap CSS
+import MunicipalityDetail from './pages/MunicipalityDetail'; // New Municipality detail component
+import PlaceDetail from './pages/PlaceDetail';
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App: React.FC = () => {
   return (
     <div className="app-container">
-      <Header /> {/* Header stays consistent on every page */}
+      <TopBar />
+      <Header />
       <main className="main-content">
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -25,15 +27,21 @@ const App: React.FC = () => {
           <Route path="/geography/greece/municipalities" element={<Municipalities />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          {/* Dynamic route for place details */}
+
+          {/* Route for Municipality Details */}
+          <Route
+            path="/:continentSlug/:countrySlug/:regionSlug/:municipalitySlug"
+            element={<MunicipalityDetail />}  // Use MunicipalityDetail component
+          />
+
+          {/* Existing dynamic route for place details */}
           <Route
             path="/:continentSlug/:countrySlug/:regionSlug/:municipalitySlug/:placeSlug/"
             element={<PlaceDetail />}
           />
-          {/* Add more routes as needed */}
         </Routes>
       </main>
-      <Footer /> {/* Footer is placed after the content */}
+      <Footer />
     </div>
   );
 };

@@ -56,7 +56,7 @@ const PlaceDetail: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const apiUrl = `/api/${countrySlug}/${regionSlug}/${municipalitySlug}/${placeSlug}/`; // Including placeSlug
+    const apiUrl = `${process.env.REACT_APP_API_URL}api/${countrySlug}/${regionSlug}/${municipalitySlug}/${placeSlug}/`; // Including placeSlug
 
     fetch(apiUrl)
       .then((response) => {

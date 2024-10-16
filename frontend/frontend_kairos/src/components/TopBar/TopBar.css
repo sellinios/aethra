@@ -1,27 +1,30 @@
 /* src/components/TopBar/TopBar.css */
+
 .top-bar {
-  background-color: #f0f0f0;
-  padding: 5px 20px;
-  text-align: right;
-  font-size: 14px;
-  color: #333;
+  background-color: #343a40;  /* Dark background for better contrast */
+  color: #f8f9fa;  /* Light text for readability */
+  padding: 10px 0;  /* Padding for space */
+  border-bottom: 1px solid #dee2e6;
+  font-size: 14px;  /* Slightly smaller font size */
 }
 
 .nearest-place-info {
-  display: inline-block;
-  margin-right: 20px;
+  font-size: 16px;  /* Larger font for visibility */
+  color: #f8f9fa;  /* Light text to match dark background */
 }
 
-.nearest-place-info a {
-  color: #007bff;
+.nearest-place-link {
+  color: #007bff;  /* Bootstrap's primary color for the link */
+  font-weight: bold;
   text-decoration: none;
 }
 
-.nearest-place-info a:hover {
+.nearest-place-link:hover {
+  color: #ffc107;  /* Light hover color (yellow) for contrast */
   text-decoration: underline;
 }
 
 .error {
-  color: red;
-  font-size: 14px;
+  color: #ff4d4d;  /* Red error color for visibility */
+  font-weight: bold;
 }
