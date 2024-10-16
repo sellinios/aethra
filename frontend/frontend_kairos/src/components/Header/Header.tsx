@@ -1,4 +1,3 @@
-// src/components/Header/Header.tsx
 import React, { useEffect, useState } from 'react';
 import { Navbar, Container, Nav, NavDropdown, NavbarText } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -89,7 +88,6 @@ const Header: React.FC = () => {
                 <LinkContainer to="/geography/greece/municipalities">
                   <NavDropdown.Item>{t('municipalities')}</NavDropdown.Item>
                 </LinkContainer>
-                {/* Add more dropdown items as needed */}
               </NavDropdown>
 
               <LinkContainer to="/login">
