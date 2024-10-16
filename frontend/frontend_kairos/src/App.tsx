@@ -1,3 +1,4 @@
+// src/App.tsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import TopBar from './components/TopBar/TopBar';
@@ -9,7 +10,7 @@ import ContactPage from './pages/ContactPage';
 import Municipalities from './pages/Municipalities';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import MunicipalityDetail from './pages/MunicipalityDetail'; // New Municipality detail component
+import MunicipalityDetail from './pages/MunicipalityDetail';
 import PlaceDetail from './pages/PlaceDetail';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -31,7 +32,7 @@ const App: React.FC = () => {
           {/* Route for Municipality Details */}
           <Route
             path="/:continentSlug/:countrySlug/:regionSlug/:municipalitySlug"
-            element={<MunicipalityDetail />}  // Use MunicipalityDetail component
+            element={<MunicipalityDetail />}
           />
 
           {/* Existing dynamic route for place details */}

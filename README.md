@@ -5,7 +5,7 @@
 To view the project structure, run:
 
 ```bash
-tree -L 5 -I 'node_modules|build|venv|static'
+tree -L 5 -I 'node_modules|build|venv|static|Data'
 ```
 
 ## Dependency Management

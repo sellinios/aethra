@@ -1,3 +1,4 @@
+// src/components/TopBar/TopBar.tsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -13,12 +14,13 @@ interface PlaceData {
   continent_slug: string;
   country_slug: string;
   region_slug: string;
-  municipality_slug: string;  // Use this to show municipality
+  municipality_slug: string;
+  municipality_name: string; // Added to display the municipality name
   place_slug: string;
 }
 
 const TopBar: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [placeData, setPlaceData] = useState<PlaceData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +29,17 @@ const TopBar: React.FC = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          fetch(`/api/place/?latitude=${latitude}&longitude=${longitude}`)
+
+          // Construct the API URL with the language code and proper handling of slashes
+          const apiUrl = `${process.env.REACT_APP_API_URL}/${i18n.language}/api/place/?latitude=${latitude}&longitude=${longitude}`;
+
+          console.log('API URL:', apiUrl); // Debugging
+
+          fetch(apiUrl, {
+            headers: {
+              'Accept-Language': i18n.language,
+            },
+          })
             .then((response) => {
               if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -35,10 +47,12 @@ const TopBar: React.FC = () => {
               return response.json();
             })
             .then((data) => {
+              console.log('Fetched data:', data); // Debugging
               setPlaceData(data);
             })
             .catch((error) => {
-              setError(error.toString());
+              console.error('Error fetching place data:', error);
+              setError(t('error_fetching_place_data'));
             });
         },
         (error) => {
@@ -48,7 +62,7 @@ const TopBar: React.FC = () => {
     } else {
       setError(t('geolocation_not_available'));
     }
-  }, [t]);
+  }, [i18n.language, t]);
 
   return (
     <div className="top-bar">
@@ -62,7 +76,7 @@ const TopBar: React.FC = () => {
                   to={`/${placeData.continent_slug}/${placeData.country_slug}/${placeData.region_slug}/${placeData.municipality_slug}/`}
                   className="nearest-place-link"
                 >
-                  {placeData.municipality_slug} {/* Display municipality instead of place */}
+                  {placeData.municipality_name} {/* Display municipality name instead of slug */}
                 </Link>
               </div>
             )}

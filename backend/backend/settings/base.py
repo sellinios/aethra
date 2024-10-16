@@ -5,14 +5,12 @@ from django.core.exceptions import ImproperlyConfigured
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-
 # Function to get environment variables with validation
 def get_env_variable(var_name):
     value = os.getenv(var_name)
     if value is None:
         raise ImproperlyConfigured(f"The {var_name} environment variable is not set.")
     return value
-
 
 # ------------------------------
 # SECURITY SETTINGS
@@ -33,9 +31,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'parler',
-    'corsheaders',
-    'rest_framework',
+    'parler',  # Parler for multilingual support
+    'corsheaders',  # CORS headers support
+    'rest_framework',  # Django REST framework for APIs
     'django.contrib.gis',  # GeoDjango GIS features
 
     # Your Django apps
@@ -49,9 +47,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Allow CORS for your APIs
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  # LocaleMiddleware for language detection
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -115,13 +113,32 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------
 # INTERNATIONALIZATION
 # ------------------------------
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'  # Set your default language (e.g., 'en')
+
+# Supported languages
+LANGUAGES = [
+    ('en', 'English'),
+    ('el', 'Greek'),
+    ('es', 'Spanish'),
+    ('fr', 'French'),
+    ('de', 'German'),
+    ('it', 'Italian'),
+    ('ru', 'Russian'),
+    ('zh-hans', 'Simplified Chinese'),
+    ('ja', 'Japanese'),
+    ('pt', 'Portuguese'),
+]
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
+
+# Paths to translation files (usually .po and .mo files for different languages)
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 # ------------------------------
 # STATIC AND MEDIA FILES
@@ -191,7 +208,7 @@ PARLER_LANGUAGES = {
         {'code': 'de', 'name': 'German'},
         {'code': 'it', 'name': 'Italian'},
         {'code': 'ru', 'name': 'Russian'},
-        {'code': 'zh-hans', 'name': 'Chinese'},
+        {'code': 'zh-hans', 'name': 'Simplified Chinese'},
         {'code': 'ja', 'name': 'Japanese'},
         {'code': 'pt', 'name': 'Portuguese'},
     ),
@@ -204,11 +221,8 @@ PARLER_LANGUAGES = {
 # ------------------------------
 # CORS HEADERS SETTINGS
 # ------------------------------
-
 CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
     if origin.strip()
 ]
-
-# Additional settings for development/production can go in development.py or production.py

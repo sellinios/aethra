@@ -44,6 +44,8 @@ SECURE_HSTS_PRELOAD = os.getenv('DJANGO_SECURE_HSTS_PRELOAD', 'True').lower() in
 # CORS SETTINGS
 # ------------------------------
 CORS_ALLOWED_ORIGINS = [
-    'https://www.kairos.gr',  # Your production frontend
-    'https://kairos.gr',      # Alternate domain, if needed
+    'https://kairos.gr',
+    'https://www.kairos.gr',
+    'https://fthina.gr',
+    'https://www.fthina.gr',
 ]

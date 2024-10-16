@@ -19,7 +19,7 @@ const LanguageSwitcher: React.FC = () => {
       </Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Item onClick={() => changeLanguage('en')}>English</Dropdown.Item>
-        <Dropdown.Item onClick={() => changeLanguage('gr')}>Ελληνικά (Greek)</Dropdown.Item>
+        <Dropdown.Item onClick={() => changeLanguage('el')}>Ελληνικά (Greek)</Dropdown.Item>
         <Dropdown.Item onClick={() => changeLanguage('es')}>Español (Spanish)</Dropdown.Item>
         <Dropdown.Item onClick={() => changeLanguage('fr')}>Français (French)</Dropdown.Item>
         <Dropdown.Item onClick={() => changeLanguage('de')}>Deutsch (German)</Dropdown.Item>
