@@ -24,12 +24,15 @@ def place_detail(request, country_slug, region_slug, municipality_slug, place_sl
     except GeographicPlace.DoesNotExist:
         return JsonResponse({'error': 'Place not found.'}, status=404)
 
+    # Prepare response data
     response_data = {
         'name': place.safe_translation_getter('name', language_code=language, any_language=True),
         'description': place.safe_translation_getter('description', language_code=language, any_language=True),
         'latitude': place.latitude,
         'longitude': place.longitude,
         'elevation': place.elevation,
+        'municipality_name': municipality.safe_translation_getter('name', language_code=language, any_language=True),
+        'municipality_slug': municipality.slug,
         # Include other necessary fields or slugs if needed
     }
 

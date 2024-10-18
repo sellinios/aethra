@@ -17,17 +17,17 @@ interface WeatherDataEntry {
 }
 
 interface CurrentConditionsProps {
-  currentData: WeatherDataEntry;
+  data: WeatherDataEntry;
 }
 
-const CurrentConditions: React.FC<CurrentConditionsProps> = ({ currentData }) => {
+const CurrentConditions: React.FC<CurrentConditionsProps> = ({ data }) => {
   const {
     datetime,
     temperature_celsius,
     relative_humidity_percent,
     wind_speed_m_s,
     weather_condition,
-  } = currentData;
+  } = data;
 
   // Determine if it's daytime based on the hour
   const hour = moment(datetime).hour();
@@ -68,11 +68,17 @@ const CurrentConditions: React.FC<CurrentConditionsProps> = ({ currentData }) =>
         <WeatherIcon state={iconState} width={50} height={50} color="black" />
         <div style={{ marginLeft: '20px' }}>
           <Title level={4}>{moment(datetime).format('LLLL')}</Title>
-          <Text>Temperature: {temperature_celsius !== undefined ? `${temperature_celsius}°C` : 'N/A'}</Text>
+          <Text>
+            Temperature: {temperature_celsius !== undefined ? `${temperature_celsius}°C` : 'N/A'}
+          </Text>
           <br />
-          <Text>Humidity: {relative_humidity_percent !== undefined ? `${relative_humidity_percent}%` : 'N/A'}</Text>
+          <Text>
+            Humidity: {relative_humidity_percent !== undefined ? `${relative_humidity_percent}%` : 'N/A'}
+          </Text>
           <br />
-          <Text>Wind Speed: {wind_speed_m_s !== undefined ? `${wind_speed_m_s} m/s` : 'N/A'}</Text>
+          <Text>
+            Wind Speed: {wind_speed_m_s !== undefined ? `${wind_speed_m_s} m/s` : 'N/A'}
+          </Text>
           <br />
           <Text>Condition: {weather_condition || 'N/A'}</Text>
         </div>

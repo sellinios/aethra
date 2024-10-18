@@ -15,7 +15,7 @@ interface PlaceData {
   country_slug: string;
   region_slug: string;
   municipality_slug: string;
-  municipality_name: string; // Added to display the municipality name
+  municipality_name: string;
   place_slug: string;
 }
 
@@ -33,8 +33,6 @@ const TopBar: React.FC = () => {
           // Construct the API URL with the language code and proper handling of slashes
           const apiUrl = `${process.env.REACT_APP_API_URL}/${i18n.language}/api/place/?latitude=${latitude}&longitude=${longitude}`;
 
-          console.log('API URL:', apiUrl); // Debugging
-
           fetch(apiUrl, {
             headers: {
               'Accept-Language': i18n.language,
@@ -47,11 +45,9 @@ const TopBar: React.FC = () => {
               return response.json();
             })
             .then((data) => {
-              console.log('Fetched data:', data); // Debugging
               setPlaceData(data);
             })
             .catch((error) => {
-              console.error('Error fetching place data:', error);
               setError(t('error_fetching_place_data'));
             });
         },
@@ -71,12 +67,12 @@ const TopBar: React.FC = () => {
           <Col md={12} className="text-center">
             {placeData && (
               <div className="nearest-place-info">
-                {t('nearest_municipality')}: {' '}
+                {t('nearest_place')}: {' '}
                 <Link
-                  to={`/${placeData.continent_slug}/${placeData.country_slug}/${placeData.region_slug}/${placeData.municipality_slug}/`}
+                  to={`/${placeData.continent_slug}/${placeData.country_slug}/${placeData.region_slug}/${placeData.municipality_slug}/${placeData.place_slug}/`} // Place slug included
                   className="nearest-place-link"
                 >
-                  {placeData.municipality_name} {/* Display municipality name instead of slug */}
+                  {placeData.name} {/* Now showing the place name instead of municipality */}
                 </Link>
               </div>
             )}

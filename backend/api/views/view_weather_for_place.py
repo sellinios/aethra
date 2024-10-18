@@ -10,9 +10,7 @@ def weather_for_place(request, place_slug):
 
     # Find the place
     try:
-        place = GeographicPlace.objects.get(
-            slug=place_slug
-        )
+        place = GeographicPlace.objects.get(slug=place_slug)
     except GeographicPlace.DoesNotExist:
         return JsonResponse({'error': 'Place not found.'}, status=404)
 
