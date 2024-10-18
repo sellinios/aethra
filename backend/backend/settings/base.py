@@ -200,7 +200,7 @@ CSRF_TRUSTED_ORIGINS = [
 # PARLER LANGUAGE SETTINGS
 # ------------------------------
 PARLER_LANGUAGES = {
-    None: (
+    None: [
         {'code': 'en', 'name': 'English'},
         {'code': 'el', 'name': 'Greek'},
         {'code': 'es', 'name': 'Spanish'},
@@ -211,9 +211,9 @@ PARLER_LANGUAGES = {
         {'code': 'zh-hans', 'name': 'Simplified Chinese'},
         {'code': 'ja', 'name': 'Japanese'},
         {'code': 'pt', 'name': 'Portuguese'},
-    ),
+    ],
     'default': {
-        'fallback': ['en'],  # Fallback to English
+        'fallback': 'en',  # Fallback to English (should be a string, not a list)
         'hide_untranslated': False,
     }
 }

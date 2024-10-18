@@ -1,8 +1,5 @@
-// src/components/NearestPlace.jsx
-
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import PropTypes from 'prop-types';
 
 function NearestPlace() {
   const { t, i18n } = useTranslation();
@@ -12,9 +9,8 @@ function NearestPlace() {
   useEffect(() => {
     const fetchNearestPlace = async (latitude, longitude) => {
       try {
-        // Construct the API URL safely
         const apiUrl = `${process.env.REACT_APP_API_URL}/${i18n.language}/api/place/?latitude=${latitude}&longitude=${longitude}`;
-
+        console.log('Fetching nearest place from:', apiUrl);
         const response = await fetch(apiUrl);
 
         if (!response.ok) {
@@ -23,8 +19,7 @@ function NearestPlace() {
         }
 
         const data = await response.json();
-
-        // Set the place data
+        console.log('Place Data:', data);
         setPlaceData(data);
       } catch (err) {
         console.error('Error fetching nearest place:', err);
@@ -32,7 +27,6 @@ function NearestPlace() {
       }
     };
 
-    // Check if geolocation is available
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -61,6 +55,9 @@ function NearestPlace() {
     return <div>{t('loading')}</div>;
   }
 
+  const placeUrl = `/${placeData.continent_slug}/${placeData.country_slug}/${placeData.region_slug}/${placeData.municipality_slug}/${placeData.place_slug}/`;
+  console.log('Generated URL:', placeUrl);
+
   return (
     <div>
       <h2>{t('nearest_place')}: {placeData.name}</h2>
@@ -70,9 +67,7 @@ function NearestPlace() {
       </p>
       <p>{t('elevation')}: {placeData.elevation}</p>
       {/* Link to the place detail page */}
-      <a
-        href={`/${placeData.continent_slug}/${placeData.country_slug}/${placeData.region_slug}/${placeData.municipality_slug}/${placeData.place_slug}/`}
-      >
+      <a href={placeUrl}>
         {t('view_details')}
       </a>
     </div>

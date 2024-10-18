@@ -23,7 +23,11 @@ services:
       - '8001:8000'  # Changed host port from 8000 to 8001
     depends_on:
       - db
+    environment:
+      - DJANGO_SETTINGS_MODULE=backend.settings  # Ensure settings are applied
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/aethradb
 
+  # Frontend Epsilon service
   frontend_kairos:
     build:
       context: ./frontend/frontend_kairos

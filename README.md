@@ -62,6 +62,7 @@ Bring up the containers with rebuild:
 
 ```bash
 docker-compose -f compose.yaml up -d --build
+npm run build
 docker-compose -f compose.yaml up -d --build backend
 docker-compose -f compose.yaml up -d --build frontend
 ```

@@ -11,13 +11,14 @@ logging.basicConfig(level=logging.INFO)
 
 def extract_forecast_details(filename, folder_name):
     try:
-        # Extract date and forecast hour from filename
-        parts = filename.replace('.grib2', '').split('_')
-        date_str = parts[1]
-        cycle_hour = parts[2]
-        forecast_hour_str = parts[3]
+        # Example filename: gfs.t12z.pgrb2.0p25.f000
+        parts = filename.split('.')
+        cycle_hour = parts[1][1:3]  # Extract '12' from 't12z'
+        forecast_hour_str = parts[-1][1:]  # Extract '000' from 'f000'
 
-        # Calculate the cycle datetime and valid datetime
+        # Use folder name as date string (assuming it is 'YYYYMMDD_HH')
+        date_str = folder_name.split('_')[0]  # Extract '20241018'
+
         cycle_datetime = datetime.strptime(f"{date_str}{cycle_hour}", "%Y%m%d%H").replace(tzinfo=timezone.utc)
         forecast_hour = int(forecast_hour_str)
         valid_datetime = cycle_datetime + timedelta(hours=forecast_hour)
@@ -88,7 +89,7 @@ class Command(BaseCommand):
             subdir_path = os.path.join(base_directory, subdir)
             if os.path.isdir(subdir_path) and subdir.startswith("2024"):
                 for filename in os.listdir(subdir_path):
-                    if filename.endswith('.grib2'):
+                    if filename.startswith('gfs') and '.f' in filename:
                         grib_files.append((subdir, filename))
 
         if not grib_files:

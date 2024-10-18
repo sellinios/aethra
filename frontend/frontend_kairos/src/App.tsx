@@ -29,16 +29,16 @@ const App: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
-          {/* Route for Municipality Details */}
-          <Route
-            path="/:continentSlug/:countrySlug/:regionSlug/:municipalitySlug"
-            element={<MunicipalityDetail />}
-          />
-
-          {/* Existing dynamic route for place details */}
+          {/* Place the PlaceDetail route above MunicipalityDetail */}
           <Route
             path="/:continentSlug/:countrySlug/:regionSlug/:municipalitySlug/:placeSlug/"
             element={<PlaceDetail />}
+          />
+
+          {/* Route for Municipality Details */}
+          <Route
+            path="/:continentSlug/:countrySlug/:regionSlug/:municipalitySlug/"
+            element={<MunicipalityDetail />}
           />
         </Routes>
       </main>

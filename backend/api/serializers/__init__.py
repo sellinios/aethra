@@ -1,2 +1,2 @@
-from .serializer_geography_ListMunicipality import MunicipalitySerializer
+from .serializer_geography_municipalities import MunicipalitySerializer
 from .serializer_geography_planet import SerializerGeographicPlanet
