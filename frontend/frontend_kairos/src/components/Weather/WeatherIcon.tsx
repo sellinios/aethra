@@ -1,4 +1,5 @@
 // src/components/WeatherIcon.tsx
+
 import React from 'react';
 import {
   RseClearDay,
@@ -26,22 +27,22 @@ import {
 } from 'react-skycons-extended';
 
 interface WeatherIconProps {
-  state: string;
+  state?: string; // Made optional to handle undefined values
   width: number;
   height: number;
-  color?: string;
+  color?: string; // Added 'color' prop as optional
   className?: string;
 }
 
 const WeatherIcon: React.FC<WeatherIconProps> = ({
-  state,
+  state = 'cloudy', // Default state if undefined
   width,
   height,
-  color = 'black',
-  className,
+  color = 'black', // Default color if not provided
+  className = '',
 }) => {
   const getIconComponent = (state: string): React.FC<any> => {
-    switch (state) {
+    switch (state.toLowerCase()) {
       case 'sunny':
         return RseClearDay;
       case 'clear-night':
@@ -53,8 +54,11 @@ const WeatherIcon: React.FC<WeatherIconProps> = ({
       case 'hail':
         return RseHail;
       case 'partlycloudy':
+      case 'partly-cloudy':
+      case 'partlycloudy-day':
         return RsePartlyCloudyDay;
       case 'partlycloudy-night':
+      case 'partly-cloudy-night':
         return RsePartlyCloudyNight;
       case 'rain':
         return RseRain;
@@ -87,7 +91,7 @@ const WeatherIcon: React.FC<WeatherIconProps> = ({
       case 'wind':
         return RseWind;
       default:
-        return RseCloudy;
+        return RseCloudy; // Default icon if state doesn't match any case
     }
   };
 
@@ -96,10 +100,10 @@ const WeatherIcon: React.FC<WeatherIconProps> = ({
   return (
     <div className={`weather-icon ${className}`}>
       <IconComponent
-        color={color}
+        color={color} // Use the color prop here
         width={width}
         height={height}
-        autoplay={true}
+        animate={true} // Optional: Animate the icon if supported
       />
     </div>
   );

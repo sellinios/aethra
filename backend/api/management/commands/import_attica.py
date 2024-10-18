@@ -9,6 +9,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         divisions = [
             {"name": "Attica", "slug": "", "parent": None, "level_name": "Region"},
+            {"name": "Municipality of Athens", "slug": "", "parent": "attica", "level_name": "Municipality"},
             {"name": "Municipality of Acharnes", "slug": "", "parent": "attica", "level_name": "Municipality"},
             {"name": "Municipality of Aegina", "slug": "", "parent": "attica", "level_name": "Municipality"},
             {"name": "Municipality of Agia Paraskevi", "slug": "", "parent": "attica", "level_name": "Municipality"},

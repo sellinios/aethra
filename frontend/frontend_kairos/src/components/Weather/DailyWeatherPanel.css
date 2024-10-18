@@ -1,0 +1,20 @@
+/* src/components/Weather/DailyWeatherPanel.css */
+
+.daily-weather-panel {
+  margin: 20px 0;
+}
+
+.weather-card {
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.weather-icon {
+  text-align: center;
+}
+
+.forecast-link {
+  color: #1890ff;
+  cursor: pointer;
+  text-decoration: underline;
+}
