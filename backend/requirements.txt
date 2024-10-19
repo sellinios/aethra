@@ -20,6 +20,7 @@ psycopg2-binary==2.9.10
 pygrib==2.1.6
 pyproj==3.7.0
 python-dotenv==1.0.1
+pytz==2024.2
 requests==2.32.3
 scipy==1.14.1
 soupsieve==2.6

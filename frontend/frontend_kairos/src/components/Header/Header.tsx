@@ -1,64 +1,32 @@
+// src/components/Header/Header.tsx
+
 import React from 'react';
-import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
+import { Navbar, Container } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from '../LanguageSwitcher';
 import Logo from '../Logo';
-import './Header.css'; // Optional: Additional styling for header
+import Menu from '../Menu'; // Ensure Menu is properly imported
+import './Header.css'; // Additional styling for the header
 
 const Header: React.FC = () => {
-  const { t } = useTranslation();
-
   return (
     <header className="header">
-      <Navbar expand="lg" className="navbar-dark bg-dark" sticky="top">
-        <Container fluid>
-          {/* Logo aligned to the left */}
-          <LinkContainer to="/" className="me-auto">
-            <Navbar.Brand>
+      <Navbar expand="lg" bg="dark" variant="dark" className="navbar-custom">
+        <Container fluid className="d-flex align-items-center justify-content-between">
+          {/* Logo positioned on the left */}
+          <LinkContainer to="/">
+            <Navbar.Brand className="d-flex align-items-center">
               <Logo />
             </Navbar.Brand>
           </LinkContainer>
 
-          {/* Navbar toggle for smaller screens */}
-          <Navbar.Toggle aria-controls="navbar-nav" />
+          {/* Toggle Button for Mobile View */}
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-          {/* Navbar collapse for toggling menu items */}
-          <Navbar.Collapse id="navbar-nav">
-            <Nav className="ms-auto">
-              {/* Navigation Links */}
-              <LinkContainer to="/">
-                <Nav.Link>{t('home')}</Nav.Link>
-              </LinkContainer>
-
-              <LinkContainer to="/about">
-                <Nav.Link>{t('about')}</Nav.Link>
-              </LinkContainer>
-
-              <LinkContainer to="/contact">
-                <Nav.Link>{t('contact')}</Nav.Link>
-              </LinkContainer>
-
-              {/* Geography Dropdown Menu */}
-              <NavDropdown title={t('geography')} id="geography-dropdown">
-                <LinkContainer to="/geography/greece/municipalities">
-                  <NavDropdown.Item>{t('municipalities')}</NavDropdown.Item>
-                </LinkContainer>
-              </NavDropdown>
-
-              <LinkContainer to="/login">
-                <Nav.Link>{t('login')}</Nav.Link>
-              </LinkContainer>
-
-              <LinkContainer to="/register">
-                <Nav.Link>{t('register')}</Nav.Link>
-              </LinkContainer>
-
-              {/* Language Switcher */}
-              <Nav.Item>
-                <LanguageSwitcher />
-              </Nav.Item>
-            </Nav>
+          {/* Menu Component positioned on the right */}
+          <Navbar.Collapse id="basic-navbar-nav">
+            <div className="menu-container d-flex align-items-center">
+              <Menu />
+            </div>
           </Navbar.Collapse>
         </Container>
       </Navbar>

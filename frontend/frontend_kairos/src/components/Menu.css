@@ -1,0 +1,95 @@
+/* src/components/Menu/Menu.css */
+
+/* Ensure the navigation uses flexbox for horizontal alignment */
+.menu-nav {
+  display: flex;
+  align-items: center; /* Vertically center items */
+  gap: 1rem; /* Space between menu items */
+}
+
+/* Optional: Style individual links */
+.menu-nav .nav-link {
+  color: #ffffff !important; /* Ensure links are visible on dark background */
+  transition: color 0.3s ease;
+}
+
+.menu-nav .nav-link:hover {
+  color: #dddddd !important; /* Hover effect */
+}
+
+/* Container for Language Switcher to align it properly */
+.language-switcher-container {
+  /* No left margin since it's now the first item */
+  /* Optionally, add right margin to space from menu items */
+  margin-right: 1rem;
+}
+
+/* Language Switcher Styling */
+.language-switcher {
+  /* Additional styling if necessary */
+}
+
+/* Adjust the dropdown toggle to blend with the menu */
+.language-switcher .dropdown-toggle {
+  background-color: transparent; /* Transparent background */
+  border: 1px solid #ffffff; /* White border */
+  color: #ffffff; /* White text */
+  padding: 0.3rem 0.6rem; /* Adjust padding for better fit */
+  font-size: 0.9rem; /* Smaller font size */
+  border-radius: 4px; /* Slightly rounded corners */
+  display: flex;
+  align-items: center;
+}
+
+/* Hover and focus states for the dropdown toggle */
+.language-switcher .dropdown-toggle:hover,
+.language-switcher .dropdown-toggle:focus {
+  background-color: rgba(255, 255, 255, 0.1); /* Slightly opaque background */
+  color: #ffffff;
+}
+
+/* Dropdown menu styling */
+.language-switcher .dropdown-menu {
+  background-color: #343a40; /* Dark background for dropdown */
+  border: none; /* Remove border */
+}
+
+/* Dropdown items styling */
+.language-switcher .dropdown-item {
+  color: #ffffff; /* White text for dropdown items */
+}
+
+.language-switcher .dropdown-item:hover,
+.language-switcher .dropdown-item:focus {
+  background-color: #495057; /* Darker background on hover/active */
+  color: #ffffff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+  .menu-nav {
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the start */
+    gap: 0.5rem; /* Reduce space between items */
+  }
+
+  .language-switcher-container {
+    margin-right: 0; /* Remove right margin when stacked */
+  }
+
+  .language-switcher .dropdown-toggle {
+    width: 100%; /* Make the toggle full-width */
+    text-align: left; /* Align text to the left */
+  }
+}
+
+@media (max-width: 576px) {
+  .menu-nav .nav-link {
+    font-size: 0.85rem; /* Smaller font on extra small screens */
+  }
+
+  .language-switcher .dropdown-toggle {
+    font-size: 0.8rem; /* Smaller font on extra small screens */
+    padding: 0.2rem 0.4rem; /* Adjust padding */
+  }
+}

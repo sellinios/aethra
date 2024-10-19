@@ -1,10 +1,15 @@
 /* src/App.css */
 
 .app-container {
-  padding-top: 100px; /* 40px for TopBar + 60px for Header */
+  display: flex;
+  flex-direction: column;
 }
 
 .main-content {
-  min-height: calc(100vh - 100px - 60px); /* Adjust based on TopBar and Header heights */
+  margin-top: auto;
   padding: 20px;
+}
+
+.footer {
+  margin-top: auto;
 }

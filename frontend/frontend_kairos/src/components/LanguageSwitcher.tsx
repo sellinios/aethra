@@ -10,9 +10,9 @@ const LanguageSwitcher: React.FC = () => {
     i18n.changeLanguage(lng);
   };
 
-  const currentLanguage = i18n.language || 'en';
+  const currentLanguage = i18n.language || 'el'; // Default to Greek ('el')
 
-  // Display 'EN' for any 'en-*' language variant
+  // Display 'EN' for any 'en-*' language variant, otherwise use current language
   const displayLanguage = currentLanguage.startsWith('en') ? 'EN' : currentLanguage.toUpperCase();
 
   return (

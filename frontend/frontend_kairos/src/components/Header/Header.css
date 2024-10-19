@@ -1,21 +1,53 @@
-/* Optional header styles for better responsiveness */
-.header {
-  width: 100%;
+/* src/components/Header/Header.css */
+
+/* Custom Navbar Styling */
+.navbar-custom {
+  padding: 0.5rem 1rem; /* Adjust padding as needed */
 }
 
-.nearest-place-info {
-  color: #fff;
+/* Ensure the logo and menu are vertically centered */
+.header .navbar .navbar-brand,
+.header .navbar .menu-container {
+  display: flex;
+  align-items: center;
 }
 
-.error {
-  color: red;
-}
-
-/* Ensure the navbar collapses correctly on smaller screens */
-.navbar-dark .navbar-toggler {
+/* Adjust the toggle button color if necessary */
+.navbar-custom .navbar-toggler {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-.navbar-dark .navbar-brand {
-  color: #ffffff;
+.navbar-custom .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 0.5%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Optional: Change Navbar background color */
+.navbar-dark.bg-dark {
+  background-color: #343a40 !important; /* Customize as needed */
+}
+
+/* Additional Padding to prevent overlap with fixed TopBar */
+.header {
+  padding-top: 50px; /* Adjust based on TopBar's height if necessary */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .menu-container {
+    margin-top: 0.5rem; /* Space above menu when collapsed */
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar-custom {
+    padding: 0.3rem 0.5rem; /* Smaller padding on extra small screens */
+  }
+
+  .navbar-brand img {
+    height: 30px; /* Smaller logo on mobile */
+  }
+
+  .menu-container {
+    width: 100%; /* Full width for menu items on mobile */
+  }
 }

@@ -1,7 +1,10 @@
+// src/components/TopBar/TopBar.tsx
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Container, Row, Col, Alert, Button } from 'react-bootstrap';
+import { Container, Row, Col, Alert, Button, Spinner } from 'react-bootstrap';
+import { FaMapMarkerAlt } from 'react-icons/fa'; // Optional: Importing an icon
 import './TopBar.css';
 
 interface PlaceData {
@@ -25,7 +28,7 @@ const TopBar: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if location data is already stored in localStorage
+    // Retrieve stored location data from localStorage
     const storedLocation = localStorage.getItem('placeData');
     if (storedLocation) {
       setPlaceData(JSON.parse(storedLocation));
@@ -55,7 +58,7 @@ const TopBar: React.FC = () => {
               return response.json();
             })
             .then((data) => {
-              // Save the fetched data to localStorage
+              // Save fetched data to localStorage
               localStorage.setItem('placeData', JSON.stringify(data));
               setPlaceData(data);
               setLoading(false);
@@ -66,7 +69,7 @@ const TopBar: React.FC = () => {
             });
         },
         (geoError) => {
-          setError(t('error_geolocation') + ': ' + geoError.message);
+          setError(`${t('error_geolocation')}: ${geoError.message}`);
           setLoading(false);
         }
       );
@@ -78,19 +81,27 @@ const TopBar: React.FC = () => {
 
   return (
     <div className="top-bar">
-      <Container fluid>
+      <Container fluid className="px-0">
         <Row className="justify-content-center">
           <Col md={12} className="text-center">
             {loading ? (
-              <Alert variant="secondary" className="loading-alert">
+              <Alert variant="secondary" className="loading-alert mb-0 rounded-0">
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className="me-2"
+                />
                 {t('loading')}...
               </Alert>
             ) : error ? (
-              <Alert variant="danger" className="top-bar-alert">
+              <Alert variant="danger" className="top-bar-alert mb-0 rounded-0">
                 {error}
               </Alert>
             ) : placeData ? (
-              <Alert variant="info" className="top-bar-alert">
+              <Alert variant="info" className="top-bar-alert mb-0 rounded-0">
                 {t('nearest_place')}: {' '}
                 <Link
                   to={`/${placeData.continent_slug}/${placeData.country_slug}/${placeData.region_slug}/${placeData.municipality_slug}/${placeData.place_slug}/`}
@@ -101,7 +112,9 @@ const TopBar: React.FC = () => {
               </Alert>
             ) : (
               <div>
-                <Button onClick={handleLocationRequest} variant="primary">
+                <Button onClick={handleLocationRequest} variant="primary" className="find-nearest-btn">
+                  {/* Optional: Add an icon */}
+                  <FaMapMarkerAlt className="me-2" />
                   {t('find_nearest_place')}
                 </Button>
               </div>

@@ -129,11 +129,11 @@ LANGUAGES = [
     ('pt', 'Portuguese'),
 ]
 
-TIME_ZONE = 'UTC'
+USE_TZ = True
+TIME_ZONE = 'Europe/Athens'
 
 USE_I18N = True
 USE_L10N = True
-USE_TZ = True
 
 # Paths to translation files (usually .po and .mo files for different languages)
 LOCALE_PATHS = [

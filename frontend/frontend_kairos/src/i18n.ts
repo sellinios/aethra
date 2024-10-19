@@ -16,9 +16,10 @@ import jaTranslations from './i18n/locales/ja/translation.json';
 import ptTranslations from './i18n/locales/pt/translation.json';
 
 // Initialize i18n
+// src/i18n.ts
 i18n
-  .use(LanguageDetector) // Automatically detect user language
-  .use(initReactI18next) // Bind i18n to React
+  .use(LanguageDetector)
+  .use(initReactI18next)
   .init({
     resources: {
       en: { translation: enTranslations },
@@ -32,15 +33,24 @@ i18n
       ja: { translation: jaTranslations },
       pt: { translation: ptTranslations },
     },
-    fallbackLng: 'en', // Fallback language if none is detected
+    fallbackLng: 'el', // Default to Greek if no language is detected
+    supportedLngs: ['en', 'el', 'es', 'fr', 'de', 'it', 'ru', 'zh', 'ja', 'pt'],
     detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'], // Detection order
-      caches: ['localStorage'], // Cache user language in localStorage
+      order: ['localStorage', 'cookie', 'navigator', 'htmlTag'],
+      caches: ['localStorage', 'cookie'],
+      lookupLocalStorage: 'i18nextLng',
+      lookupCookie: 'i18next',
     },
     interpolation: {
-      escapeValue: false, // React already protects from XSS
+      escapeValue: false,
     },
+    debug: false,
+    // Override the language detection for 'en-*' to be treated as 'en'
+    react: {
+      useSuspense: false,
+    },
+    lng: i18n.language && i18n.language.startsWith('en') ? 'en' : i18n.language,
   });
 
-// Add this empty export statement to make the file a module
+
 export {};

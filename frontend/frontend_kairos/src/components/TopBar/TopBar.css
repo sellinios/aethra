@@ -4,23 +4,26 @@
 .top-bar {
   position: fixed; /* Fix the TopBar at the top */
   top: 0;
+  left: 0; /* Ensure it starts from the very left */
   width: 100%;
-  background-color: #ffffff; /* Light grey background */
-  border-bottom: 1px solid #f1f2f6; /* Subtle border */
-  padding: 10px 0;
+  background-color: #ffffff; /* White background */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  border-bottom: 1px solid #e0e0e0; /* Slightly darker border */
   font-size: 14px;
-  z-index: 1040; /* Ensure it’s above the header */
+  z-index: 1040; /* Ensure it’s above other elements */
+  padding: 10px 0; /* Add padding for spacing */
 }
 
-/* Alert styles */
-.top-bar-alert, .loading-alert {
+/* Alert styles with increased specificity */
+.top-bar .top-bar-alert,
+.top-bar .loading-alert {
   padding: 0.5rem 1rem;
   margin: 0;
-  border-radius: 0; /* Keep the alert panel style consistent */
+  border-radius: 0 !important; /* Remove rounded corners */
 }
 
 /* Loading alert styling */
-.loading-alert {
+.top-bar .loading-alert {
   background-color: #e9ecef; /* Light grey for the loading alert */
   color: #6c757d; /* Bootstrap's muted text color */
   font-weight: 500;
@@ -28,15 +31,44 @@
 }
 
 /* Nearest place link styling */
-.nearest-place-link {
+.top-bar .nearest-place-link {
   color: #0d6efd; /* Bootstrap's primary color */
   font-weight: bold;
   text-decoration: none;
 }
 
-.nearest-place-link:hover {
+.top-bar .nearest-place-link:hover {
   color: #0a58ca; /* Darker primary color for hover */
   text-decoration: underline;
+}
+
+/* Style the find nearest place button */
+.top-bar .find-nearest-btn {
+  border-radius: 0; /* Remove rounded corners */
+  padding: 0.5rem 1rem; /* Adjust padding for better appearance */
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.top-bar .find-nearest-btn:hover {
+  background-color: #0b5ed7; /* Slightly darker on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+}
+
+.top-bar .find-nearest-btn:active {
+  background-color: #0a58ca; /* Even darker when active */
+  transform: translateY(0);
+}
+
+.top-bar .find-nearest-btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25); /* Bootstrap's focus outline */
+}
+
+/* Ensure the button spans the full width on smaller screens */
+.top-bar .btn {
+  width: auto; /* Adjust if you want buttons to be full-width */
 }
 
 /* Responsive adjustments */
@@ -44,5 +76,20 @@
   .top-bar {
     font-size: 13px;
     padding: 8px 0;
+  }
+
+  .top-bar .top-bar-alert,
+  .top-bar .loading-alert {
+    padding: 0.4rem 0.8rem;
+  }
+
+  .top-bar .nearest-place-link {
+    font-size: 0.9rem;
+  }
+
+  .top-bar .find-nearest-btn {
+    width: 100%; /* Make the button full-width on small screens */
+    padding: 0.6rem 1rem;
+    justify-content: center;
   }
 }

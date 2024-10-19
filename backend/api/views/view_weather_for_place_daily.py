@@ -1,11 +1,12 @@
 from django.http import JsonResponse
 from django.utils.translation import get_language
+from django.utils import timezone
 from geography.models import GeographicPlace
 from weather.models import GFSForecast
 from api.serializers import DailyWeatherSerializer
 from django.db.models import Max, Min, Avg
-from django.db.models.functions import ExtractYear, ExtractMonth, ExtractDay, Cast
-from django.db.models import FloatField
+from django.db.models.functions import TruncDate
+from django.db.models import FloatField, Cast
 
 def weather_for_place_daily(request, place_slug):
     language = get_language()
@@ -16,15 +17,14 @@ def weather_for_place_daily(request, place_slug):
     except GeographicPlace.DoesNotExist:
         return JsonResponse({'error': 'Place not found.'}, status=404)
 
-    # Fetch and aggregate daily weather data from GFSForecast using ExtractYear, ExtractMonth, and ExtractDay
+    # Get today's date in the specified timezone
+    today = timezone.now().date()
+
+    # Fetch and aggregate daily weather data from GFSForecast
     daily_forecasts = (
-        GFSForecast.objects.filter(place=place)
-        .annotate(
-            year=ExtractYear('date'),
-            month=ExtractMonth('date'),
-            day=ExtractDay('date')
-        )
-        .values('year', 'month', 'day')
+        GFSForecast.objects.filter(place=place, date__gte=today)  # Filter out past dates
+        .annotate(date_only=TruncDate('date'))  # Truncate datetime to date
+        .values('date_only')  # Group by date
         .annotate(
             max_temp=Max(Cast('forecast_data__2t_level_2_heightAboveGround', FloatField())),  # Cast to Float
             min_temp=Min(Cast('forecast_data__2t_level_2_heightAboveGround', FloatField())),
@@ -32,13 +32,13 @@ def weather_for_place_daily(request, place_slug):
             max_precipitation=Max(Cast('forecast_data__tp_level_0_surface', FloatField())),
             wind_speed_avg=Avg(Cast('forecast_data__10u_level_10_heightAboveGround', FloatField())),
         )
-        .order_by('year', 'month', 'day')
+        .order_by('date_only')  # Sort by date ascending
     )
 
-    # Reconstruct the date from the extracted year, month, and day
+    # Reconstruct the date from the extracted date_only
     daily_weather_data = [
         {
-            'date': f"{forecast['year']}-{forecast['month']:02d}-{forecast['day']:02d}",
+            'date': forecast['date_only'].strftime('%Y-%m-%d'),
             'max_temp': forecast['max_temp'] - 273.15,  # Convert from Kelvin to Celsius
             'min_temp': forecast['min_temp'] - 273.15,  # Convert from Kelvin to Celsius
             'avg_cloud_cover': forecast['avg_cloud_cover'],
