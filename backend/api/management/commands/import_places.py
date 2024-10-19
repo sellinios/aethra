@@ -6,6 +6,7 @@ from geography.models import GeographicPlace, GeographicCategory, GeographicDivi
 from unidecode import unidecode
 from django.utils.text import slugify
 
+
 class Command(BaseCommand):
     help = 'Import geographic places for Greece at every 10 meters interval'
 
@@ -19,7 +20,7 @@ class Command(BaseCommand):
         # Define the bounding box for Greece
         min_lat, max_lat = 34.802066, 41.748878
         min_lng, max_lng = 19.316406, 28.256348
-        interval = 0.001
+        interval = 0.001  # Approximately 100 meters
 
         # Default category
         default_category, created = GeographicCategory.objects.get_or_create(
@@ -45,31 +46,45 @@ class Command(BaseCommand):
         lat_chunks = [lat_steps[i:i + chunk_size] for i in range(0, len(lat_steps), chunk_size)]
 
         with Pool() as pool:
-            results = pool.starmap(process_chunk, [(chunk, lng_steps, default_category, default_division) for chunk in lat_chunks])
+            results = pool.starmap(process_chunk,
+                                   [(chunk, lng_steps, default_category, default_division) for chunk in lat_chunks])
 
         end_time = time.time()
-        self.stdout.write(self.style.SUCCESS(f'Completed importing geographic places in {end_time - start_time:.2f} seconds.'))
+        self.stdout.write(
+            self.style.SUCCESS(f'Completed importing geographic places in {end_time - start_time:.2f} seconds.'))
+
 
 def process_chunk(lat_chunk, lng_steps, default_category, default_division):
+    from geography.models import GeographicPlace  # Import inside the function for multiprocessing
+    from django.db import transaction
+
     places = []
     for lat in lat_chunk:
         for lng in lng_steps:
             # Round latitude and longitude to six decimal places
-            lat = round(lat, 6)
-            lng = round(lng, 6)
+            lat_rounded = round(lat, 6)
+            lng_rounded = round(lng, 6)
+            # Generate a unique slug based on coordinates
+            slug = slugify(f"{lat_rounded}-{lng_rounded}")
+
             place = GeographicPlace(
-                longitude=lng,
-                latitude=lat,
+                longitude=lng_rounded,
+                latitude=lat_rounded,
                 category=default_category,
-                admin_division=default_division
+                admin_division=default_division,
+                slug=slug
             )
             places.append(place)
-            if len(places) >= 10000:  # Batch insert every 10000 places
-                GeographicPlace.objects.bulk_create(places)
+
+            if len(places) >= 10000:  # Batch insert every 10,000 places
+                with transaction.atomic():
+                    GeographicPlace.objects.bulk_create(places, ignore_conflicts=True)
                 places = []
 
     if places:
-        GeographicPlace.objects.bulk_create(places)
+        with transaction.atomic():
+            GeographicPlace.objects.bulk_create(places, ignore_conflicts=True)
+
 
 def frange(start, stop, step):
     while start < stop:

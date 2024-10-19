@@ -1,0 +1,8 @@
+{# geography/templates/admin/geography/geographicplace/change_list.html #}
+{% extends "admin/change_list.html" %}
+{% block object-tools %}
+    <div class="object-tools">
+        <a href="{% url 'admin:geographicplace_map' %}" class="addlink">View Map</a>
+    </div>
+    {{ block.super }}
+{% endblock %}

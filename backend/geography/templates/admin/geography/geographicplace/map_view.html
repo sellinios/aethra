@@ -1,0 +1,58 @@
+{# geography/templates/admin/geography/geographicplace/map_view.html #}
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load json_script %}
+
+{% block content %}
+  <h1>Geographic Places Map</h1>
+  <div id="map" style="height: 600px;"></div>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-sA+ePHItR3vovmCKtzj1S4PA5jV2E+N3qv96TLyXGns="
+        crossorigin=""/>
+
+  <!-- Leaflet JavaScript -->
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+          integrity="sha256-QVStzYk4CgOZjK3rYQl9HgHcEmGhlbTrZLTGf3Cw3RM="
+          crossorigin=""></script>
+
+  <!-- MarkerCluster CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <!-- MarkerCluster JavaScript -->
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+  <!-- Embed serialized_places JSON data -->
+  {{ serialized_places|json_script:"places-data" }}
+
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          // Initialize the map
+          var map = L.map('map').setView([20, 0], 2);
+
+          // Add OpenStreetMap tiles
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; OpenStreetMap contributors'
+          }).addTo(map);
+
+          // Initialize Marker Cluster Group
+          var markers = L.markerClusterGroup();
+
+          // Retrieve the serialized_places data
+          var places = JSON.parse(document.getElementById('places-data').textContent);
+
+          // Add markers for each place
+          places.forEach(function(place) {
+              if (place.latitude && place.longitude) {
+                  var marker = L.marker([place.latitude, place.longitude])
+                      .bindPopup("<strong>" + place.name + "</strong><br/>Admin Division: " + place.admin_division);
+                  markers.addLayer(marker);
+              }
+          });
+
+          map.addLayer(markers);
+      });
+  </script>
+{% endblock %}

@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'corsheaders',  # CORS headers support
     'rest_framework',  # Django REST framework for APIs
     'django.contrib.gis',  # GeoDjango GIS features
+    'leaflet',
 
     # Your Django apps
     'api',  # Adjust according to your actual app name
