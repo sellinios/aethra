@@ -1,10 +1,17 @@
+// src/HomePage.tsx
+
 import React, { useEffect, useState } from 'react';
-import { Spin, Alert, Typography, Table } from 'antd';
-import { Helmet } from 'react-helmet-async'; // Import Helmet for SEO
-import './HomePage.css'; // Import the custom CSS
+import { Spin, Alert, Typography, Table, Input, Button, Space, Popconfirm } from 'antd';
+import { Helmet } from 'react-helmet-async';
+import './HomePage.css';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Container, Row, Col } from 'react-bootstrap'; // If using Bootstrap
 
 const { Title } = Typography;
+
+// Define the Breakpoint type locally
+type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 interface DailyWeather {
   date: string;
@@ -21,51 +28,79 @@ interface CityWeather {
 }
 
 const HomePage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [weatherData, setWeatherData] = useState<{ [key: string]: CityWeather }>({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [locations, setLocations] = useState<string[]>([]);
+  const [newLocation, setNewLocation] = useState<string>('');
 
+  // Load locations from localStorage on component mount
+  useEffect(() => {
+    const storedLocations = localStorage.getItem('myLocations');
+    if (storedLocations) {
+      setLocations(JSON.parse(storedLocations));
+    } else {
+      // Initialize with a default location, e.g., Athens
+      setLocations(['Athens']);
+    }
+  }, []);
+
+  // Save locations to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('myLocations', JSON.stringify(locations));
+  }, [locations]);
+
+  // Fetch weather data whenever locations or language changes
   useEffect(() => {
     const fetchWeatherData = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const cityWeatherData: { [key: string]: CityWeather } = {};
-        const apiUrl = `${process.env.REACT_APP_API_URL}/en/api/weather/daily/athens/`; // API for Athens
 
-        const response = await fetch(apiUrl);
-        console.log(`Fetching data from: ${apiUrl}`);
+        // Create an array of fetch promises for all locations
+        const fetchPromises = locations.map(async (city) => {
+          const apiUrl = `${process.env.REACT_APP_API_URL}/${i18n.language}/api/weather/daily/${city.toLowerCase()}/`;
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data for Athens. Status: ${response.status}`);
-        }
+          const response = await fetch(apiUrl);
+          console.log(`Fetching data from: ${apiUrl}`);
 
-        const data = await response.json();
-        console.log(`API response for Athens:`, data);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch data for ${city}. Status: ${response.status}`);
+          }
 
-        if (!data.daily_weather_data) {
-          throw new Error(`Unexpected data format for Athens`);
-        }
+          const data = await response.json();
+          console.log(`API response for ${city}:`, data);
 
-        // Sort the data to ensure it starts from the current day
-        const sortedWeatherData = data.daily_weather_data.sort(
-          (a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
+          if (!data.daily_weather_data) {
+            throw new Error(`Unexpected data format for ${city}`);
+          }
 
-        console.log(`Sorted weather data:`, sortedWeatherData);
+          // Sort the data to ensure it starts from the current day
+          const sortedWeatherData = data.daily_weather_data.sort(
+            (a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()
+          );
 
-        cityWeatherData['Athens'] = {
-          name: data.place_name,
-          weather: sortedWeatherData.slice(0, 4).map((day: any) => ({
-            date: day.date,
-            maxTemp: Math.round(day.max_temp), // Round temperature
-            minTemp: Math.round(day.min_temp), // Round temperature
-            avgCloudCover: day.avg_cloud_cover,
-            maxPrecipitation: day.max_precipitation,
-            windSpeedAvg: day.wind_speed_avg,
-          })),
-        };
+          console.log(`Sorted weather data for ${city}:`, sortedWeatherData);
 
-        console.log(`Processed weather data for Athens:`, cityWeatherData);
+          cityWeatherData[city] = {
+            name: data.place_name,
+            weather: sortedWeatherData.slice(0, 4).map((day: any) => ({
+              date: day.date,
+              maxTemp: Math.round(day.max_temp),
+              minTemp: Math.round(day.min_temp),
+              avgCloudCover: day.avg_cloud_cover,
+              maxPrecipitation: day.max_precipitation,
+              windSpeedAvg: day.wind_speed_avg,
+            })),
+          };
+        });
+
+        // Await all fetch promises
+        await Promise.all(fetchPromises);
+
+        console.log(`Processed weather data for all locations:`, cityWeatherData);
 
         setWeatherData(cityWeatherData);
       } catch (err: any) {
@@ -76,34 +111,74 @@ const HomePage: React.FC = () => {
       }
     };
 
-    fetchWeatherData();
-  }, []); // Fetch data only once
+    if (locations.length > 0) {
+      fetchWeatherData();
+    } else {
+      setWeatherData({});
+      setLoading(false);
+    }
+  }, [locations, i18n.language]);
+
+  // Handler to add a new location
+  const handleAddLocation = () => {
+    const trimmedLocation = newLocation.trim();
+    if (trimmedLocation && !locations.includes(trimmedLocation)) {
+      setLocations([...locations, trimmedLocation]);
+      setNewLocation('');
+    }
+  };
+
+  // Handler to remove a location
+  const handleRemoveLocation = (city: string) => {
+    setLocations(locations.filter((location) => location !== city));
+  };
 
   if (loading) {
-    return <Spin tip={t('loading')} />;
+    return (
+      <Container className="weather-container">
+        <Row className="justify-content-center">
+          <Spin tip={t('loading')} />
+        </Row>
+      </Container>
+    );
   }
 
   if (error) {
-    return <Alert message={t('error')} description={error} type="error" showIcon />;
+    return (
+      <Container className="weather-container">
+        <Row className="justify-content-center">
+          <Alert message={t('error')} description={error} type="error" showIcon />
+        </Row>
+      </Container>
+    );
   }
 
-  // Check if there is at least one city with weather data
+  if (locations.length === 0) {
+    return (
+      <Container className="weather-container">
+        <Row className="justify-content-center">
+          <Alert message={t('noLocations')} type="info" showIcon />
+        </Row>
+      </Container>
+    );
+  }
+
+  // Prepare day names based on the first available city's weather data
   const firstCityKey = Object.keys(weatherData)[0];
-  if (!firstCityKey || !weatherData[firstCityKey].weather.length) {
-    return <Alert message={t('error')} description={t('noData')} type="warning" showIcon />;
-  }
+  let dayNames: string[] = [];
 
-  // Extract day names from the first city's weather data
-  const firstCityWeather = weatherData[firstCityKey].weather;
-  const dayNames = firstCityWeather.map((day) => {
-    const date = new Date(`${day.date}T00:00:00Z`); // Ensures UTC parsing
-    console.log(`Processing date: ${day.date} -> Parsed Date: ${date}`);
-    const dayIndex = date.getDay(); // 0: Sunday, 1: Monday, ..., 6: Saturday
-    const dayNameKey = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][dayIndex];
-    const dayName = t(dayNameKey);
-    console.log(`Day Index: ${dayIndex}, Day Name Key: ${dayNameKey}, Day Name: ${dayName}`);
-    return dayName;
-  });
+  if (firstCityKey && weatherData[firstCityKey].weather.length) {
+    const firstCityWeather = weatherData[firstCityKey].weather;
+    dayNames = firstCityWeather.map((day) => {
+      const date = new Date(`${day.date}T00:00:00Z`);
+      console.log(`Processing date: ${day.date} -> Parsed Date: ${date}`);
+      const dayIndex = date.getDay();
+      const dayNameKey = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][dayIndex];
+      const dayName = t(dayNameKey);
+      console.log(`Day Index: ${dayIndex}, Day Name Key: ${dayNameKey}, Day Name: ${dayName}`);
+      return dayName;
+    });
+  }
 
   // Dynamically generate columns based on day names
   const columns = [
@@ -111,19 +186,35 @@ const HomePage: React.FC = () => {
       title: t('city'),
       dataIndex: 'city',
       key: 'city',
+      fixed: 'left' as const,
+      width: 150,
+      render: (text: string, record: any) => (
+        <Space>
+          {text}
+          <Popconfirm
+            title={t('removeLocationConfirm', { city: text })}
+            onConfirm={() => handleRemoveLocation(text)}
+            okText={t('yes')}
+            cancelText={t('no')}
+          >
+            <Button type="link" icon={<DeleteOutlined />} danger />
+          </Popconfirm>
+        </Space>
+      ),
     },
     ...dayNames.map((dayName, index) => ({
       title: dayName,
       dataIndex: `day${index}`,
       key: `day${index}`,
+      width: 120,
+      responsive: ['sm'] as Breakpoint[], // Use the locally defined Breakpoint type
     })),
   ];
 
   // Generate dataSource dynamically
-  const dataSource = Object.keys(weatherData).map((cityName) => {
-    const cityWeather = weatherData[cityName].weather;
+  const dataSource = locations.map((cityName) => {
+    const cityWeather = weatherData[cityName]?.weather || [];
 
-    // Ensure that the number of days matches the columns
     const weatherDays = cityWeather.slice(0, dayNames.length);
 
     const dayEntries: { [key: string]: string } = {};
@@ -133,7 +224,7 @@ const HomePage: React.FC = () => {
 
     return {
       key: cityName,
-      city: weatherData[cityName].name,
+      city: cityName,
       ...dayEntries,
     };
   });
@@ -142,22 +233,53 @@ const HomePage: React.FC = () => {
   console.log(`Generated dataSource:`, dataSource);
 
   return (
-    <div className="weather-container">
+    <Container className="weather-container">
       <Helmet>
         <title>{t('weatherForecastTitle')}</title>
         <meta name="description" content={t('weatherForecastDescription')} />
       </Helmet>
-      <Title level={2} className="weather-title">
-        {t('cityWeatherForecast', { days: dayNames.length })}
-      </Title>
-      <Table
-        dataSource={dataSource}
-        columns={columns}
-        pagination={false}
-        className="weather-table"
-        scroll={{ x: true }} // Enable horizontal scrolling on small screens
-      />
-    </div>
+      <Row className="justify-content-center">
+        <Col xs={12}>
+          <Title level={2} className="weather-title">
+            {t('myLocations')}
+          </Title>
+        </Col>
+      </Row>
+
+      {/* Add Location Input */}
+      <Row className="justify-content-center mb-3">
+        <Col xs={12} md={8} lg={6}>
+          <Space>
+            <Input
+              placeholder={t('addLocationPlaceholder')}
+              value={newLocation}
+              onChange={(e) => setNewLocation(e.target.value)}
+              onPressEnter={handleAddLocation}
+              className="w-100"
+            />
+            <Button type="primary" onClick={handleAddLocation} icon={<PlusOutlined />}>
+              {t('add')}
+            </Button>
+          </Space>
+        </Col>
+      </Row>
+
+      {/* Weather Table */}
+      <Row>
+        <Col>
+          <Table
+            dataSource={dataSource}
+            columns={columns}
+            pagination={false}
+            className="weather-table"
+            scroll={{ x: 'max-content' }}
+            rowClassName={(record) => (record.city.toLowerCase() === 'athens' ? 'athens-row' : '')} // Assign 'athens-row' class to Athens
+            bordered
+            size="middle"
+          />
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
