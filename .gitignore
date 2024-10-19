@@ -16,6 +16,8 @@
 # Ignore node_modules in frontend
 /frontend/frontend_fthina/node_modules/
 /frontend/frontend_kairos/node_modules/
+/frontend/frontend_fthina/build/
+/frontend/frontend_kairos/build/
 
 /frontend/frontend_fthina/src/react-app-env.d.ts
 
