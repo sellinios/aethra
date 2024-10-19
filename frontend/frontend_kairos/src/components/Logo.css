@@ -1,0 +1,38 @@
+/* src/components/Logo.css */
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: transparent; /* Ensures the logo stands out against the header background */
+  cursor: pointer; /* Indicates the logo is clickable */
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-text {
+  font-size: 40px;
+  color: lightskyblue;
+  margin: 0;
+  font-weight: bold;
+}
+
+.sub-text {
+  font-size: 15px;
+  color: white;
+  margin-top: -5px;
+}
+
+@media (max-width: 768px) {
+  .main-text {
+    font-size: 30px;
+  }
+
+  .sub-text {
+    font-size: 12px;
+  }
+}

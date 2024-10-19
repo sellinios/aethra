@@ -1,23 +1,10 @@
 /* src/App.css */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
 
-#root {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* Make the root container take up the full height of the viewport */
+.app-container {
+  padding-top: 100px; /* 40px for TopBar + 60px for Header */
 }
 
 .main-content {
-  flex: 1;  /* Allow the main content to grow and fill the available space */
-}
-
-.footer {
-  background-color: #343a40;
-  color: white;
-  text-align: center;
-  padding: 1rem 0;
+  min-height: calc(100vh - 100px - 60px); /* Adjust based on TopBar and Header heights */
+  padding: 20px;
 }

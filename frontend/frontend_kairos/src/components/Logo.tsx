@@ -1,42 +1,20 @@
 // src/components/Logo.tsx
+
 import React from 'react';
-import WeatherIcon from './Weather/WeatherIcon'; // Ensure this is the correct import
+import { LinkContainer } from 'react-router-bootstrap'; // Ensure react-router-bootstrap is installed
+import './Logo.css';
 
 const Logo: React.FC = () => {
-    const logoStyle: React.CSSProperties = {
-        display: 'flex',
-        alignItems: 'center',
-        padding: '10px',
-        borderRadius: '5px',
-    };
-
-    const textContainerStyle: React.CSSProperties = {
-        display: 'flex',
-        flexDirection: 'column',
-        marginRight: '10px',
-    };
-
-    const mainTextStyle: React.CSSProperties = {
-        fontSize: '40px',
-        color: 'lightskyblue',
-        margin: 0,
-    };
-
-    const subTextStyle: React.CSSProperties = {
-        fontSize: '15px',
-        color: 'white',
-        marginTop: '-5px',
-    };
-
-    return (
-        <div style={logoStyle}>
-            <div style={textContainerStyle}>
-                <div style={mainTextStyle}>Kairos</div>
-                <div style={subTextStyle}>www.kairos.gr</div>
-            </div>
-            <WeatherIcon state="wind" width={60} height={60} color="orange" />
+  return (
+    <LinkContainer to="/">
+      <div className="logo-container">
+        <div className="text-container">
+          <div className="main-text">Kairos</div>
+          <div className="sub-text">www.kairos.gr</div>
         </div>
-    );
+      </div>
+    </LinkContainer>
+  );
 };
 
 export default Logo;

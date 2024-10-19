@@ -1,20 +1,76 @@
 /* src/components/Weather/DailyWeatherPanel.css */
 
-.daily-weather-panel {
-  margin: 20px 0;
-}
-
-.weather-card {
-  margin-bottom: 10px;
-  padding: 10px;
-}
-
-.weather-icon {
+/* Basic table styling to integrate with Bootstrap */
+.daily-weather-table {
+  margin-top: 1rem;
+  width: 100%;
+  border-collapse: collapse;
   text-align: center;
 }
 
-.forecast-link {
-  color: #1890ff;
-  cursor: pointer;
-  text-decoration: underline;
+/* Table headers */
+.daily-weather-table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+}
+
+/* Table cells */
+.daily-weather-table td {
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  vertical-align: middle;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  /* Make table cells more compact */
+  .daily-weather-table td,
+  .daily-weather-table th {
+    padding: 0.5rem;
+    font-size: 0.875rem; /* Smaller font size for smaller screens */
+  }
+
+  /* Center align content on small screens */
+  .daily-weather-table {
+    text-align: center;
+  }
+}
+
+/* Icon and temperature alignment */
+.d-flex.align-items-center {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Adjusting secondary text styling */
+.text-secondary {
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Adding a bit of spacing between sections */
+.container.my-4 {
+  padding: 2rem;
+}
+
+/* Adding styles for empty data */
+.no-data {
+  color: #adb5bd;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* Styling for header responsiveness */
+.table-responsive th {
+  white-space: nowrap;
+}
+
+/* Special styles for the weather forecast title in meta */
+h1, .weather-forecast-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 1rem 0;
 }

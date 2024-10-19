@@ -1,8 +1,9 @@
 // src/components/TopBar/TopBar.tsx
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Alert } from 'react-bootstrap';
 import './TopBar.css';
 
 interface PlaceData {
@@ -22,6 +23,7 @@ interface PlaceData {
 const TopBar: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [placeData, setPlaceData] = useState<PlaceData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -30,7 +32,6 @@ const TopBar: React.FC = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
 
-          // Construct the API URL with the language code and proper handling of slashes
           const apiUrl = `${process.env.REACT_APP_API_URL}/${i18n.language}/api/place/?latitude=${latitude}&longitude=${longitude}`;
 
           fetch(apiUrl, {
@@ -46,37 +47,50 @@ const TopBar: React.FC = () => {
             })
             .then((data) => {
               setPlaceData(data);
+              setLoading(false);
             })
-            .catch((error) => {
+            .catch(() => {
               setError(t('error_fetching_place_data'));
+              setLoading(false);
             });
         },
-        (error) => {
-          setError(t('error_geolocation') + ': ' + error.message);
+        (geoError) => {
+          setError(t('error_geolocation') + ': ' + geoError.message);
+          setLoading(false);
         }
       );
     } else {
       setError(t('geolocation_not_available'));
+      setLoading(false);
     }
   }, [i18n.language, t]);
 
   return (
     <div className="top-bar">
       <Container fluid>
-        <Row className="align-items-center">
+        <Row className="justify-content-center">
           <Col md={12} className="text-center">
-            {placeData && (
-              <div className="nearest-place-info">
-                {t('nearest_place')}: {' '}
-                <Link
-                  to={`/${placeData.continent_slug}/${placeData.country_slug}/${placeData.region_slug}/${placeData.municipality_slug}/${placeData.place_slug}/`} // Place slug included
-                  className="nearest-place-link"
-                >
-                  {placeData.name} {/* Now showing the place name instead of municipality */}
-                </Link>
-              </div>
+            {loading ? (
+              <Alert variant="secondary" className="loading-alert">
+                {t('loading')}...
+              </Alert>
+            ) : error ? (
+              <Alert variant="danger" className="top-bar-alert">
+                {error}
+              </Alert>
+            ) : (
+              placeData && (
+                <Alert variant="info" className="top-bar-alert">
+                  {t('nearest_place')}: {' '}
+                  <Link
+                    to={`/${placeData.continent_slug}/${placeData.country_slug}/${placeData.region_slug}/${placeData.municipality_slug}/${placeData.place_slug}/`}
+                    className="nearest-place-link"
+                  >
+                    {placeData.name}
+                  </Link>
+                </Alert>
+              )
             )}
-            {error && <div className="error">{error}</div>}
           </Col>
         </Row>
       </Container>

@@ -1,30 +1,48 @@
 /* src/components/TopBar/TopBar.css */
 
+/* Basic styling for the top-bar */
 .top-bar {
-  background-color: #343a40;  /* Dark background for better contrast */
-  color: #f8f9fa;  /* Light text for readability */
-  padding: 10px 0;  /* Padding for space */
-  border-bottom: 1px solid #dee2e6;
-  font-size: 14px;  /* Slightly smaller font size */
+  position: fixed; /* Fix the TopBar at the top */
+  top: 0;
+  width: 100%;
+  background-color: #ffffff; /* Light grey background */
+  border-bottom: 1px solid #f1f2f6; /* Subtle border */
+  padding: 10px 0;
+  font-size: 14px;
+  z-index: 1040; /* Ensure it’s above the header */
 }
 
-.nearest-place-info {
-  font-size: 16px;  /* Larger font for visibility */
-  color: #f8f9fa;  /* Light text to match dark background */
+/* Alert styles */
+.top-bar-alert, .loading-alert {
+  padding: 0.5rem 1rem;
+  margin: 0;
+  border-radius: 0; /* Keep the alert panel style consistent */
 }
 
+/* Loading alert styling */
+.loading-alert {
+  background-color: #e9ecef; /* Light grey for the loading alert */
+  color: #6c757d; /* Bootstrap's muted text color */
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* Nearest place link styling */
 .nearest-place-link {
-  color: #007bff;  /* Bootstrap's primary color for the link */
+  color: #0d6efd; /* Bootstrap's primary color */
   font-weight: bold;
   text-decoration: none;
 }
 
 .nearest-place-link:hover {
-  color: #ffc107;  /* Light hover color (yellow) for contrast */
+  color: #0a58ca; /* Darker primary color for hover */
   text-decoration: underline;
 }
 
-.error {
-  color: #ff4d4d;  /* Red error color for visibility */
-  font-weight: bold;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .top-bar {
+    font-size: 13px;
+    padding: 8px 0;
+  }
 }

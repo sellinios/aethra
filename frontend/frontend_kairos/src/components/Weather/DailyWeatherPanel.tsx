@@ -3,7 +3,9 @@
 import React from 'react';
 import { Table, Typography } from 'antd';
 import moment from 'moment';
-import WeatherIcon from './WeatherIcon'; // Import the updated WeatherIcon component
+import WeatherIcon from './WeatherIcon';
+import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import './DailyWeatherPanel.css';
 
 const { Text } = Typography;
@@ -22,67 +24,63 @@ interface DailyWeatherPanelProps {
 }
 
 const DailyWeatherPanel: React.FC<DailyWeatherPanelProps> = ({ data }) => {
-  // Group weather data by date
+  const { t } = useTranslation();
   const groupedData = groupByDate(data);
 
-  // Define columns for the table
+  // Define translations outside the renderTimeSlot function
+  const noDataText = t('noData');
+  const timeSlots = {
+    night: t('night'),
+    morning: t('morning'),
+    afternoon: t('afternoon'),
+    evening: t('evening'),
+  };
+
   const columns = [
     {
-      title: 'Date',
+      title: t('date'),
       dataIndex: 'date',
       key: 'date',
       render: (text: string) => <Text strong>{moment(text).format('dddd D MMM')}</Text>,
     },
     {
-      title: 'Night',
+      title: timeSlots.night,
       dataIndex: 'night',
       key: 'night',
-      render: (entry: WeatherDataEntry | null) => renderTimeSlot(entry, 'Night'),
+      render: (entry: WeatherDataEntry | null) => renderTimeSlot(entry, timeSlots.night, noDataText),
     },
     {
-      title: 'Morning',
+      title: timeSlots.morning,
       dataIndex: 'morning',
       key: 'morning',
-      render: (entry: WeatherDataEntry | null) => renderTimeSlot(entry, 'Morning'),
+      render: (entry: WeatherDataEntry | null) => renderTimeSlot(entry, timeSlots.morning, noDataText),
     },
     {
-      title: 'Afternoon',
+      title: timeSlots.afternoon,
       dataIndex: 'afternoon',
       key: 'afternoon',
-      render: (entry: WeatherDataEntry | null) => renderTimeSlot(entry, 'Afternoon'),
+      render: (entry: WeatherDataEntry | null) => renderTimeSlot(entry, timeSlots.afternoon, noDataText),
     },
     {
-      title: 'Evening',
+      title: timeSlots.evening,
       dataIndex: 'evening',
       key: 'evening',
-      render: (entry: WeatherDataEntry | null) => renderTimeSlot(entry, 'Evening'),
+      render: (entry: WeatherDataEntry | null) => renderTimeSlot(entry, timeSlots.evening, noDataText),
     },
     {
-      title: 'Temperature high/low',
+      title: t('temperatureHighLow'),
       dataIndex: 'temperature',
       key: 'temperature',
       render: (_: unknown, record: any) => (
         <Text>
           {record.temperature_high !== undefined && record.temperature_low !== undefined
-            ? `${record.temperature_high}° / ${record.temperature_low}°`
+            ? `${Math.round(record.temperature_high)}° / ${Math.round(record.temperature_low)}°`
             : '-° / -°'}
         </Text>
       ),
     },
     {
-      title: 'Wind',
-      dataIndex: 'wind',
-      key: 'wind',
-      render: (_: unknown, record: any) => (
-        <Text>
-          {record.wind_speed !== undefined
-            ? `${record.wind_speed} m/s ${record.wind_direction ?? ''}`
-            : '- m/s'}
-        </Text>
-      ),
-    },
-    {
-      title: 'Precipitation',
+      title: t('precipitation'),
       dataIndex: 'precipitation',
       key: 'precipitation',
       render: (_: unknown, record: any) => (
@@ -91,9 +89,20 @@ const DailyWeatherPanel: React.FC<DailyWeatherPanelProps> = ({ data }) => {
         </Text>
       ),
     },
+    {
+      title: t('wind'),
+      dataIndex: 'wind',
+      key: 'wind',
+      render: (_: unknown, record: any) => (
+        <Text>
+          {record.wind_direction ? `${record.wind_direction} ` : ''}{record.wind_speed !== undefined
+            ? `${record.wind_speed.toFixed(1)} m/s`
+            : '- m/s'}
+        </Text>
+      ),
+    },
   ];
 
-  // Transform grouped data into the format needed for the table
   const tableData = Object.keys(groupedData).map((date) => {
     const dailyEntries = groupedData[date];
     const temperatures = dailyEntries.map((entry) => entry.temperature_celsius ?? null).filter((temp) => temp !== null) as number[];
@@ -113,17 +122,26 @@ const DailyWeatherPanel: React.FC<DailyWeatherPanelProps> = ({ data }) => {
   });
 
   return (
-    <Table
-      columns={columns}
-      dataSource={tableData}
-      pagination={false}
-      bordered
-      className="daily-weather-table"
-    />
+    <>
+      <Helmet>
+        <title>{t('weatherForecastTitle')}</title>
+        <meta name="description" content={t('weatherForecastDescription')} />
+      </Helmet>
+      <div className="container my-4">
+        <div className="table-responsive">
+          <Table
+            columns={columns}
+            dataSource={tableData}
+            pagination={false}
+            bordered
+            className="daily-weather-table"
+          />
+        </div>
+      </div>
+    </>
   );
 };
 
-// Group the data by date
 const groupByDate = (data: WeatherDataEntry[]) => {
   return data.reduce((acc: { [key: string]: WeatherDataEntry[] }, entry) => {
     const date = moment(entry.datetime).format('YYYY-MM-DD');
@@ -135,25 +153,24 @@ const groupByDate = (data: WeatherDataEntry[]) => {
   }, {});
 };
 
-// Render the time slot with the icon and temperature
-const renderTimeSlot = (entry: WeatherDataEntry | null, label: string) => {
+const renderTimeSlot = (entry: WeatherDataEntry | null, label: string, noDataText: string) => {
   if (!entry) {
-    return <Text type="secondary">No data</Text>;
+    return <Text type="secondary">{label}: {noDataText}</Text>;
   }
+
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div className="d-flex align-items-center gap-2">
       <WeatherIcon
         state={getWeatherState(entry)}
         width={32}
         height={32}
-        color={getIconColor(entry)} // Pass the dynamic color here
+        color="black" // Keeping icons black as requested
       />
-      <Text>{entry.temperature_celsius !== undefined ? `${entry.temperature_celsius}°` : '-°'}</Text>
+      <Text>{entry.temperature_celsius !== undefined ? `${Math.round(entry.temperature_celsius)}°` : '-°'}</Text>
     </div>
   );
 };
 
-// Get the time slot for a given period
 const getTimeSlot = (period: string, entries: WeatherDataEntry[]): WeatherDataEntry | null => {
   const hoursMap: { [key: string]: [number, number] } = {
     morning: [6, 12],
@@ -168,10 +185,9 @@ const getTimeSlot = (period: string, entries: WeatherDataEntry[]): WeatherDataEn
   }) || null;
 };
 
-// Placeholder function to map weather data to state for icons
 const getWeatherState = (entry: WeatherDataEntry): string => {
   if (entry.temperature_celsius === undefined) {
-    return 'cloudy'; // Default state
+    return 'cloudy';
   }
   if (entry.temperature_celsius > 25) {
     return 'sunny';
@@ -181,22 +197,6 @@ const getWeatherState = (entry: WeatherDataEntry): string => {
     return 'rain';
   } else {
     return 'cloudy';
-  }
-};
-
-// Function to determine icon color based on weather conditions
-const getIconColor = (entry: WeatherDataEntry): string => {
-  if (entry.temperature_celsius === undefined) {
-    return 'gray';
-  }
-  if (entry.temperature_celsius > 25) {
-    return 'orange';
-  } else if (entry.wind_speed_m_s && entry.wind_speed_m_s > 10) {
-    return 'blue';
-  } else if (entry.total_precipitation_mm && entry.total_precipitation_mm > 0) {
-    return 'blue';
-  } else {
-    return 'gray';
   }
 };
 
