@@ -10,7 +10,7 @@ const Logo: React.FC = () => {
       <div className="logo-container">
         <div className="text-container">
           <div className="main-text">Kairos</div>
-          <div className="sub-text">www.kairos.gr</div>
+          <div className="sub-text">by Aethra</div>
         </div>
       </div>
     </LinkContainer>

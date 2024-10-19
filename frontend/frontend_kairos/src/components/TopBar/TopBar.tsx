@@ -1,9 +1,7 @@
-// src/components/TopBar/TopBar.tsx
-
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Container, Row, Col, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Alert, Button } from 'react-bootstrap';
 import './TopBar.css';
 
 interface PlaceData {
@@ -23,10 +21,21 @@ interface PlaceData {
 const TopBar: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [placeData, setPlaceData] = useState<PlaceData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Check if location data is already stored in localStorage
+    const storedLocation = localStorage.getItem('placeData');
+    if (storedLocation) {
+      setPlaceData(JSON.parse(storedLocation));
+    }
+  }, []);
+
+  const handleLocationRequest = () => {
+    setLoading(true);
+    setError(null);
+
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -46,6 +55,8 @@ const TopBar: React.FC = () => {
               return response.json();
             })
             .then((data) => {
+              // Save the fetched data to localStorage
+              localStorage.setItem('placeData', JSON.stringify(data));
               setPlaceData(data);
               setLoading(false);
             })
@@ -63,7 +74,7 @@ const TopBar: React.FC = () => {
       setError(t('geolocation_not_available'));
       setLoading(false);
     }
-  }, [i18n.language, t]);
+  };
 
   return (
     <div className="top-bar">
@@ -78,18 +89,22 @@ const TopBar: React.FC = () => {
               <Alert variant="danger" className="top-bar-alert">
                 {error}
               </Alert>
+            ) : placeData ? (
+              <Alert variant="info" className="top-bar-alert">
+                {t('nearest_place')}: {' '}
+                <Link
+                  to={`/${placeData.continent_slug}/${placeData.country_slug}/${placeData.region_slug}/${placeData.municipality_slug}/${placeData.place_slug}/`}
+                  className="nearest-place-link"
+                >
+                  {placeData.name}
+                </Link>
+              </Alert>
             ) : (
-              placeData && (
-                <Alert variant="info" className="top-bar-alert">
-                  {t('nearest_place')}: {' '}
-                  <Link
-                    to={`/${placeData.continent_slug}/${placeData.country_slug}/${placeData.region_slug}/${placeData.municipality_slug}/${placeData.place_slug}/`}
-                    className="nearest-place-link"
-                  >
-                    {placeData.name}
-                  </Link>
-                </Alert>
-              )
+              <div>
+                <Button onClick={handleLocationRequest} variant="primary">
+                  {t('find_nearest_place')}
+                </Button>
+              </div>
             )}
           </Col>
         </Row>

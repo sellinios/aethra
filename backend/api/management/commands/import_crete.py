@@ -35,13 +35,23 @@ class Command(BaseCommand):
             {"name": "Municipality of Viannos", "slug": "", "parent": "crete", "level_name": "Municipality"},
         ]
 
+        # Helper function to generate a unique slug
+        def generate_unique_slug(name, parent=None):
+            base_slug = slugify(unidecode(name))
+            slug = base_slug
+            counter = 1
+            while GeographicDivision.objects.filter(slug=slug, parent=parent).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            return slug
+
         # Import divisions
         for item in divisions:
             name = item['name']
-            slug = item['slug'] or slugify(name)
             parent_slug = item['parent']
             level_name = item['level_name']
 
+            # Handle parent division if provided
             parent = None
             if parent_slug:
                 try:
@@ -50,15 +60,21 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(f'Parent division with slug "{parent_slug}" does not exist.'))
                     continue
 
-            # Check if the division already exists
+            # Generate a unique slug for the division
+            slug = generate_unique_slug(name, parent)
+
+            # Create or retrieve the division
             division, created = GeographicDivision.objects.get_or_create(
-                name=name,
                 slug=slug,
                 parent=parent,
-                level_name=level_name
+                defaults={
+                    'name': name,
+                    'level_name': level_name,
+                    'confirmed': True,  # Set other non-translated fields as needed
+                }
             )
 
-            # If the division was just created, it will have an ID assigned automatically
+            # Log success or warning
             if created:
                 self.stdout.write(self.style.SUCCESS(f'Successfully created division: {name}'))
             else:

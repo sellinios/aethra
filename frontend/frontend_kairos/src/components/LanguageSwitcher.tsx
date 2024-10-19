@@ -12,10 +12,13 @@ const LanguageSwitcher: React.FC = () => {
 
   const currentLanguage = i18n.language || 'en';
 
+  // Display 'EN' for any 'en-*' language variant
+  const displayLanguage = currentLanguage.startsWith('en') ? 'EN' : currentLanguage.toUpperCase();
+
   return (
     <Dropdown className="language-switcher">
       <Dropdown.Toggle variant="outline-light" id="language-dropdown">
-        {currentLanguage.toUpperCase()}
+        {displayLanguage}
       </Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Item onClick={() => changeLanguage('en')}>English</Dropdown.Item>

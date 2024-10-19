@@ -19,8 +19,7 @@ interface MunicipalityData {
 
 const MunicipalityDetail: React.FC = () => {
   const { t } = useTranslation();
-  const { continentSlug, countrySlug, regionSlug, municipalitySlug } = useParams<{
-    continentSlug: string;
+  const { countrySlug, regionSlug, municipalitySlug } = useParams<{
     countrySlug: string;
     regionSlug: string;
     municipalitySlug: string;

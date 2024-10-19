@@ -1,49 +1,63 @@
 import React from 'react';
-import './WeatherPanel.css';
+import { List, Card, Typography } from 'antd';
 
-interface WeatherDataEntry {
-  datetime: string;
-  temperature_celsius: number;
-  relative_humidity_percent: number;
-  wind_speed_m_s: number;
-  total_precipitation_mm: number;
+const { Title } = Typography;
+
+interface DailyWeather {
+  date: string;
+  maxTemp: number;
+  minTemp: number;
+  avgCloudCover: number;
+  maxPrecipitation: number;
+  windSpeedAvg: number;
+}
+
+interface CityWeather {
+  name: string;
+  weather: DailyWeather[];
 }
 
 interface WeatherPanelProps {
   weatherData: {
-    [city: string]: WeatherDataEntry[];
+    [key: string]: CityWeather;
   };
 }
 
+// Format the date to a more readable format
+const formatDate = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return new Intl.DateTimeFormat('en-GB', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
+};
+
 const WeatherPanel: React.FC<WeatherPanelProps> = ({ weatherData }) => {
   return (
-    <div className="weather-panel">
-      <table className="forecast-table">
-        <thead>
-          <tr>
-            <th>City</th>
-            <th>Date</th>
-            <th>Temperature (°C)</th>
-            <th>Humidity (%)</th>
-            <th>Wind Speed (m/s)</th>
-            <th>Precipitation (mm)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.keys(weatherData).map((city) =>
-            weatherData[city].map((entry, index) => (
-              <tr key={`${city}-${index}`}>
-                <td>{city}</td>
-                <td>{new Date(entry.datetime).toLocaleDateString()}</td>
-                <td>{entry.temperature_celsius}°C</td>
-                <td>{entry.relative_humidity_percent}%</td>
-                <td>{entry.wind_speed_m_s} m/s</td>
-                <td>{entry.total_precipitation_mm} mm</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+    <div>
+      {Object.keys(weatherData).map((cityName) => {
+        const cityWeather = weatherData[cityName];
+        return (
+          <Card key={cityName} title={cityWeather.name}>
+            <List
+              grid={{ gutter: 16, column: 4 }}
+              dataSource={cityWeather.weather}
+              renderItem={(day) => (
+                <List.Item>
+                  <Card>
+                    <Title level={4}>{formatDate(day.date)}</Title>
+                    <p>Max Temp: {day.maxTemp.toFixed(1)}°C</p>
+                    <p>Min Temp: {day.minTemp.toFixed(1)}°C</p>
+                    <p>Avg Cloud Cover: {day.avgCloudCover.toFixed(1)}%</p>
+                    <p>Max Precipitation: {day.maxPrecipitation.toFixed(1)}mm</p>
+                    <p>Wind Speed: {day.windSpeedAvg.toFixed(1)} km/h</p>
+                    {(day.avgCloudCover > 50 || day.maxPrecipitation > 0) && (
+                      <p>Warning: Potential bad weather!</p>
+                    )}
+                  </Card>
+                </List.Item>
+              )}
+            />
+          </Card>
+        );
+      })}
     </div>
   );
 };

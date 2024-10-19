@@ -51,7 +51,7 @@ services:
       - ./frontend/frontend_fthina/build:/usr/share/nginx/fthina_html:ro
 
   nginx:
-    image: nginx:stable-alpine
+    image: nginx:latest
     ports:
       - '80:80'
       - '443:443'

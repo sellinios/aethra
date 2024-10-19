@@ -42,4 +42,5 @@ i18n
     },
   });
 
-export default i18n;
+// Add this empty export statement to make the file a module
+export {};
