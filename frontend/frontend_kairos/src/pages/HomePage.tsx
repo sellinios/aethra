@@ -1,5 +1,3 @@
-// src/HomePage.tsx
-
 import React, { useEffect, useState } from 'react';
 import { Spin, Alert, Typography, Table, Input, Button, Space, Popconfirm } from 'antd';
 import { Helmet } from 'react-helmet-async';
@@ -7,6 +5,8 @@ import './HomePage.css';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Container, Row, Col } from 'react-bootstrap'; // If using Bootstrap
+
+import LatestArticles from '../components/LatestArticles'; // Import the LatestArticles component
 
 const { Title } = Typography;
 
@@ -233,53 +233,60 @@ const HomePage: React.FC = () => {
   console.log(`Generated dataSource:`, dataSource);
 
   return (
-    <Container className="weather-container">
-      <Helmet>
-        <title>{t('weatherForecastTitle')}</title>
-        <meta name="description" content={t('weatherForecastDescription')} />
-      </Helmet>
-      <Row className="justify-content-center">
-        <Col xs={12}>
-          <Title level={2} className="weather-title">
-            {t('myLocations')}
-          </Title>
-        </Col>
-      </Row>
+    <>
+      <Container className="weather-container">
+        <Helmet>
+          <title>{t('weatherForecastTitle')}</title>
+          <meta name="description" content={t('weatherForecastDescription')} />
+        </Helmet>
+        <Row className="justify-content-center">
+          <Col xs={12}>
+            <Title level={2} className="weather-title">
+              {t('myLocations')}
+            </Title>
+          </Col>
+        </Row>
 
-      {/* Add Location Input */}
-      <Row className="justify-content-center mb-3">
-        <Col xs={12} md={8} lg={6}>
-          <Space>
-            <Input
-              placeholder={t('addLocationPlaceholder')}
-              value={newLocation}
-              onChange={(e) => setNewLocation(e.target.value)}
-              onPressEnter={handleAddLocation}
-              className="w-100"
+        {/* Add Location Input */}
+        <Row className="justify-content-center mb-3">
+          <Col xs={12} md={8} lg={6}>
+            <Space>
+              <Input
+                placeholder={t('addLocationPlaceholder')}
+                value={newLocation}
+                onChange={(e) => setNewLocation(e.target.value)}
+                onPressEnter={handleAddLocation}
+                className="w-100"
+              />
+              <Button type="primary" onClick={handleAddLocation} icon={<PlusOutlined />}>
+                {t('add')}
+              </Button>
+            </Space>
+          </Col>
+        </Row>
+
+        {/* Weather Table */}
+        <Row>
+          <Col>
+            <Table
+              dataSource={dataSource}
+              columns={columns}
+              pagination={false}
+              className="weather-table"
+              scroll={{ x: 'max-content' }}
+              rowClassName={(record) => (record.city.toLowerCase() === 'athens' ? 'athens-row' : '')} // Assign 'athens-row' class to Athens
+              bordered
+              size="middle"
             />
-            <Button type="primary" onClick={handleAddLocation} icon={<PlusOutlined />}>
-              {t('add')}
-            </Button>
-          </Space>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
+      </Container>
 
-      {/* Weather Table */}
-      <Row>
-        <Col>
-          <Table
-            dataSource={dataSource}
-            columns={columns}
-            pagination={false}
-            className="weather-table"
-            scroll={{ x: 'max-content' }}
-            rowClassName={(record) => (record.city.toLowerCase() === 'athens' ? 'athens-row' : '')} // Assign 'athens-row' class to Athens
-            bordered
-            size="middle"
-          />
-        </Col>
-      </Row>
-    </Container>
+      {/* Separate container for Latest Articles */}
+      <Container className="articles-container mt-5">
+        <LatestArticles /> {/* Importing the articles component cleanly */}
+      </Container>
+    </>
   );
 };
 

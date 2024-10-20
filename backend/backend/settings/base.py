@@ -5,12 +5,14 @@ from django.core.exceptions import ImproperlyConfigured
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+
 # Function to get environment variables with validation
 def get_env_variable(var_name):
     value = os.getenv(var_name)
     if value is None:
         raise ImproperlyConfigured(f"The {var_name} environment variable is not set.")
     return value
+
 
 # ------------------------------
 # SECURITY SETTINGS
@@ -42,6 +44,8 @@ INSTALLED_APPS = [
     'geography',
     'weather',
     'weather_engine',
+    'tinymce',
+    'articles',
     'eshop',  # The e-commerce app
     'erp',  # The ERP app
 ]
@@ -227,3 +231,28 @@ CORS_ALLOWED_ORIGINS = [
     for origin in os.getenv('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
     if origin.strip()
 ]
+
+# Add these lines for TinyMCE configuration
+TINYMCE_DEFAULT_CONFIG = {
+    'height': '500px',
+    'width': '100%',
+    'menubar': 'file edit view insert format tools table help',
+    'plugins': '''
+        preview paste searchreplace autolink directionality code visualblocks
+        visualchars fullscreen image link media template codesample table charmap hr
+        pagebreak nonbreaking anchor insertdatetime advlist lists wordcount textpattern
+        help
+    ''',
+    'toolbar': '''
+        undo redo | bold italic underline strikethrough | fontselect fontsizeselect
+        formatselect | alignleft aligncenter alignright alignjustify | outdent indent |
+        numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons |
+        fullscreen preview save print | insertfile image media template link anchor codesample |
+        ltr rtl
+    ''',
+    'images_upload_url': '/tinymce/upload/',
+    'images_upload_credentials': True,
+    'content_css': '/static/css/content.css',  # Optional: Use custom CSS
+    'custom_undo_redo_levels': 20,
+    'entity_encoding': 'raw',  # Add this line
+}
