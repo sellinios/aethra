@@ -127,7 +127,7 @@ class Command(BaseCommand):
         logger.info('Starting elevation update process...')
 
         # Query all GeographicPlace instances that need elevation updates
-        places = GeographicPlace.objects.filter(elevation__isnull=True).only('id', 'latitude', 'longitude')
+        places = GeographicPlace.objects.filter(elevation__isnull=True).only('id', 'latitude', 'longitude') | GeographicPlace.objects.filter(elevation=0).only('id', 'latitude', 'longitude')
 
         total_places = places.count()
         if total_places == 0:

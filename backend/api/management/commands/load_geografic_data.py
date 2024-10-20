@@ -7,12 +7,10 @@ from django.contrib.gis.geos import GEOSGeometry
 from geography.models import GeographicData
 
 class Command(BaseCommand):
-    help = 'Load geographic data from GeoJSON files into the database'
+    help = 'Load geographic data (municipalities) from GeoJSON files into the database'
 
     def handle(self, *args, **kwargs):
         files_info = [
-            {"url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_GRC_1.json.zip", "file": "gadm41_GRC_1.json"},
-            {"url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_GRC_2.json.zip", "file": "gadm41_GRC_2.json"},
             {"url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_GRC_3.json.zip", "file": "gadm41_GRC_3.json"},
         ]
         extract_path = "data/"
@@ -48,14 +46,24 @@ class Command(BaseCommand):
                 # Print column names to understand the structure
                 self.stdout.write(self.style.SUCCESS(f"Columns: {gdf.columns}"))
 
-                # Create and save the GeographicData instances
+                # Create and save the GeographicData instances (focus on municipalities)
                 for index, row in gdf.iterrows():
+                    # Check for columns corresponding to municipality information
+                    if 'NAME_3' in row and 'GID_3' in row:
+                        name = row['NAME_3']
+                        gid = row['GID_3']
+                    elif 'NAME_2' in row and 'GID_2' in row:
+                        # Fallback to Level 2 if Level 3 info is not available
+                        name = row['NAME_2']
+                        gid = row['GID_2']
+                    else:
+                        self.stdout.write(self.style.ERROR(f"Skipping row {index}, no suitable municipality info found."))
+                        continue
+
                     geometry = row['geometry']
-                    name = row['NAME_3'] if 'NAME_3' in row else row['NAME_2'] if 'NAME_2' in row else row['NAME_1']  # Adjust based on column availability
-                    gid = row['GID_3'] if 'GID_3' in row else row['GID_2'] if 'GID_2' in row else row['GID_1']  # Adjust based on column availability
 
                     # Convert the Shapely geometry to a GEOSGeometry
-                    geos_geometry = GEOSGeometry(geometry.wkt)
+                    geos_geometry = GEOSGeometry(geometry.wkt, srid=4326)
 
                     # Create and save the GeographicData instance
                     geo_data = GeographicData(gid=gid, name=name, geometry=geos_geometry)

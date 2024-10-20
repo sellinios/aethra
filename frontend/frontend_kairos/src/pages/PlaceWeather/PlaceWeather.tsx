@@ -1,11 +1,9 @@
-// src/pages/PlaceDetail.tsx
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Spin, Alert, Typography } from 'antd';
-import DailyWeatherPanel from '../components/Weather/DailyWeatherPanel';
-import './PlaceDetail.css';
+import DailyWeatherPanel from '../../components/Weather/DailyWeatherPanel';
+import './PlaceWeather.css';
 
 const { Title } = Typography;
 
@@ -36,9 +34,9 @@ interface PlaceData {
   municipality_name: string;
 }
 
-const PlaceDetail: React.FC = () => {
+const PlaceWeather: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { placeSlug } = useParams<{ placeSlug: string }>();
+  const { placeSlug, regionSlug, municipalitySlug } = useParams<{ placeSlug: string, regionSlug: string, municipalitySlug: string }>();
 
   const [placeData, setPlaceData] = useState<PlaceData | null>(null);
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
@@ -48,7 +46,7 @@ const PlaceDetail: React.FC = () => {
   useEffect(() => {
     const fetchPlaceAndWeatherData = async () => {
       const language = i18n.language;
-      const placeApiUrl = `${process.env.REACT_APP_API_URL}/${language}/api/place/attica/municipality-of-vyronas/${placeSlug}/`;
+      const placeApiUrl = `${process.env.REACT_APP_API_URL}/${language}/api/place/${regionSlug}/${municipalitySlug}/${placeSlug}/`;
       const weatherApiUrl = `${process.env.REACT_APP_API_URL}/${language}/api/weather/${placeSlug}/`;
 
       try {
@@ -81,7 +79,7 @@ const PlaceDetail: React.FC = () => {
     };
 
     fetchPlaceAndWeatherData();
-  }, [placeSlug, i18n.language]);
+  }, [placeSlug, regionSlug, municipalitySlug, i18n.language]);
 
   if (loading) {
     return <Spin tip={t('loading')} />;
@@ -109,4 +107,4 @@ const PlaceDetail: React.FC = () => {
   );
 };
 
-export default PlaceDetail;
+export default PlaceWeather;

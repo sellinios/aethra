@@ -1,5 +1,4 @@
 asgiref==3.8.1
-astral==3.2
 attrs==24.2.0
 beautifulsoup4==4.12.3
 certifi==2024.8.30

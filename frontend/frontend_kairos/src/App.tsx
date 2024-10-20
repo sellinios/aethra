@@ -12,7 +12,7 @@ import Municipalities from './pages/Municipalities';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MunicipalityDetail from './pages/MunicipalityDetail';
-import PlaceDetail from './pages/PlaceDetail';
+import PlaceWeather from './pages/PlaceWeather/PlaceWeather';
 import './App.css';
 
 const App: React.FC = () => {
@@ -32,7 +32,7 @@ const App: React.FC = () => {
           {/* Dynamic Routes */}
           <Route
             path="/:continentSlug/:countrySlug/:regionSlug/:municipalitySlug/:placeSlug/"
-            element={<PlaceDetail />}
+            element={<PlaceWeather />}
           />
           <Route
             path="/:continentSlug/:countrySlug/:regionSlug/:municipalitySlug/"

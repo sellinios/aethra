@@ -1,3 +1,3 @@
 from .serializer_geography_municipalities import MunicipalitySerializer
 from .serializer_geography_planet import SerializerGeographicPlanet
-from .serializer_weather_for_place_daily import DailyWeatherSerializer
+from .serializer_weather_for_place_daily import DailyWeatherSerializer, AlertSerializer
