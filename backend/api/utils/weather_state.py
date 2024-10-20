@@ -1,5 +1,7 @@
 # api/utils/weather_state.py
 
+from .precipitation import categorize_precipitation
+
 def determine_weather_state(weather_entry):
     """
     Determine the weather state based on various weather parameters.
@@ -28,12 +30,7 @@ def determine_weather_state(weather_entry):
             state['temperature'] = 'Cold'
 
     # Precipitation
-    total_precipitation = weather_entry.get('total_precipitation_mm')
-    if total_precipitation is not None:
-        if total_precipitation > 50:
-            state['precipitation'] = 'Heavy Rain'
-        elif total_precipitation > 0:
-            state['precipitation'] = 'Rain'
+    state['precipitation'] = categorize_precipitation(weather_entry)
 
     # Cloud Cover
     avg_cloud = weather_entry.get('avg_cloud_cover', 0)

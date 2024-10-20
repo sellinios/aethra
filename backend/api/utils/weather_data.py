@@ -1,5 +1,3 @@
-# api/utils/weather_data.py
-
 import math
 import logging
 from datetime import datetime, timedelta, timezone  # Import timezone from datetime
@@ -93,7 +91,7 @@ def get_weather_data_for_place(place):
             'avg_cloud_cover': forecast_data.get('lcc_level_0_lowCloudLayer', 0),
             'wind_speed_m_s': wind_speed,
             'storm_probability_percent': storm_probability,
-            'flood': 'Flood' if storm_probability >= 80 else 'No Flood',
+            'flood': 'Flood' if storm_probability is not None and storm_probability >= 80 else 'No Flood',
         })
 
         # Build the weather data entry
